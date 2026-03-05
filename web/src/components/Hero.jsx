@@ -28,14 +28,14 @@ export default function Hero() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6 animate-fade-in-up animate-delay-100">
-              La gestión de tu
-              <span className="block text-accent"> clínica o farmacia</span>
-              simplificada
+              Gestiona tu clínica
+              <span className="block text-accent">de forma sencilla</span>
+              y asequible
             </h1>
 
             <p className="text-lg lg:text-xl text-white/80 max-w-xl mx-auto lg:mx-0 mb-8 animate-fade-in-up animate-delay-200">
-              Software integral multiplataforma para gestionar citas, pacientes, historial clínico,
-              profesionales y documentación. Todo desde una sola aplicación.
+              Citas, pacientes, historial clínico y recordatorios WhatsApp en una app nativa multiplataforma.
+              Desde consultorios independientes hasta policlínicas. 100% en español, cumplimiento RGPD total.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up animate-delay-300">
@@ -56,7 +56,11 @@ export default function Hero() {
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 mt-12 pt-8 border-t border-white/10 animate-fade-in-up animate-delay-400">
+            <div className="grid grid-cols-4 gap-4 mt-12 pt-8 border-t border-white/10 animate-fade-in-up animate-delay-400">
+              <div>
+                <div className="text-2xl lg:text-3xl font-bold text-white">14</div>
+                <div className="text-white/60 text-sm mt-1">Días gratis</div>
+              </div>
               <div>
                 <div className="text-2xl lg:text-3xl font-bold text-white">4</div>
                 <div className="text-white/60 text-sm mt-1">Plataformas</div>

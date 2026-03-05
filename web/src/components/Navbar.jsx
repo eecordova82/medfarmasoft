@@ -3,9 +3,9 @@ import { Menu, X } from 'lucide-react'
 
 const navLinks = [
   { label: 'Características', href: '#features' },
+  { label: 'Por qué nosotros', href: '#why-us' },
+  { label: 'Planes', href: '#pricing' },
   { label: 'Cómo funciona', href: '#how-it-works' },
-  { label: 'Plataformas', href: '#platforms' },
-  { label: 'Blog', href: '#blog' },
   { label: 'Contacto', href: '#contact' },
 ]
 

@@ -1,8 +1,11 @@
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import Features from './components/Features'
+import WhyUs from './components/WhyUs'
+import Pricing from './components/Pricing'
 import HowItWorks from './components/HowItWorks'
 import Platforms from './components/Platforms'
+import Testimonials from './components/Testimonials'
 import Blog from './components/Blog'
 import Contact from './components/Contact'
 import Cta from './components/Cta'
@@ -14,8 +17,11 @@ function App() {
       <Navbar />
       <Hero />
       <Features />
+      <WhyUs />
+      <Pricing />
       <HowItWorks />
       <Platforms />
+      <Testimonials />
       <Blog />
       <Contact />
       <Cta />

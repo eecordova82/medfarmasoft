@@ -19,8 +19,8 @@ export default function Cta() {
                 <span className="text-accent">hoy mismo</span>
               </h2>
               <p className="text-lg text-white/80 mb-8">
-                Descarga MedFarmaSoft en tu dispositivo favorito y comienza tu prueba gratuita de 30 días.
-                Sin tarjeta de crédito, sin compromiso.
+                Prueba MedFarmaSoft gratis durante 14 días en tu dispositivo favorito.
+                Sin tarjeta de crédito, sin compromiso, sin permanencia.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">

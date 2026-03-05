@@ -1,59 +1,57 @@
-import { Check, Star } from 'lucide-react'
+import { Check, X, Star } from 'lucide-react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
 const plans = [
   {
     name: 'Básico',
-    description: 'Ideal para profesionales independientes y consultorios pequeños.',
-    price: '18',
-    period: '/mes',
-    annualPrice: '180',
+    target: 'Profesionales autónomos y consultorios pequeños',
     features: [
-      'Hasta 2 profesionales',
-      'Hasta 100 pacientes',
-      'Citas ilimitadas',
-      'Historial clínico completo',
-      'Recordatorios por email',
-      'Cumplimiento RGPD',
-      '100 MB almacenamiento',
+      { text: 'Hasta 2 profesionales', included: true },
+      { text: 'Hasta 100 pacientes', included: true },
+      { text: 'Citas ilimitadas', included: true },
+      { text: 'Historial clínico completo', included: true },
+      { text: 'Horarios profesionales', included: true },
+      { text: 'Recordatorios por email', included: true },
+      { text: 'Consentimientos RGPD', included: true },
+      { text: 'Recordatorios WhatsApp', included: false },
+      { text: 'Panel de estadísticas', included: false },
+      { text: 'API REST', included: false },
     ],
     cta: 'Comenzar gratis',
     highlighted: false,
   },
   {
     name: 'Profesional',
-    description: 'Para clínicas y farmacias en crecimiento.',
-    price: '38',
-    period: '/mes',
-    annualPrice: '380',
+    target: 'Clínicas medianas, centros de salud y farmacias en crecimiento',
     features: [
-      'Hasta 5 profesionales',
-      'Hasta 500 pacientes',
-      'Citas ilimitadas',
-      'Historial clínico completo',
-      'Sincronización de calendario',
-      'WhatsApp y email',
-      'Panel de estadísticas',
-      '1 GB almacenamiento',
+      { text: 'Hasta 5 profesionales', included: true },
+      { text: 'Hasta 500 pacientes', included: true },
+      { text: 'Citas ilimitadas', included: true },
+      { text: 'Historial clínico completo', included: true },
+      { text: 'Horarios profesionales', included: true },
+      { text: 'Recordatorios por email', included: true },
+      { text: 'Consentimientos RGPD', included: true },
+      { text: 'Recordatorios WhatsApp', included: true },
+      { text: 'Panel de estadísticas', included: true },
+      { text: 'API REST', included: false },
     ],
     cta: 'Solicitar demo',
     highlighted: true,
   },
   {
     name: 'Enterprise',
-    description: 'Para organizaciones grandes con necesidades avanzadas.',
-    price: '75',
-    period: '/mes',
-    annualPrice: '750',
+    target: 'Clínicas grandes, policlínicas y cadenas de farmacias',
     features: [
-      'Hasta 25 profesionales',
-      'Hasta 10.000 pacientes',
-      'Todas las funcionalidades',
-      'WhatsApp + SMS (200/mes)',
-      'Acceso API',
-      'Marca blanca',
-      'Panel de estadísticas',
-      '10 GB almacenamiento',
+      { text: 'Hasta 25 profesionales', included: true },
+      { text: 'Hasta 10.000 pacientes', included: true },
+      { text: 'Citas ilimitadas', included: true },
+      { text: 'Todas las funcionalidades', included: true },
+      { text: 'WhatsApp + SMS incluidos', included: true },
+      { text: 'Acceso API para integraciones', included: true },
+      { text: 'Marca blanca (tu logo)', included: true },
+      { text: 'Panel de estadísticas', included: true },
+      { text: 'Soporte prioritario', included: true },
+      { text: 'Multi-sucursal', included: true },
     ],
     cta: 'Contactar ventas',
     highlighted: false,
@@ -69,17 +67,14 @@ export default function Pricing() {
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 reveal">
           <span className="inline-block px-4 py-1.5 bg-primary/10 text-primary font-semibold text-sm rounded-full mb-4">
-            Precios
+            Planes
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-secondary mb-6">
-            Planes que se adaptan a{' '}
-            <span className="gradient-text">tu negocio</span>
+            Un plan para cada{' '}
+            <span className="gradient-text">tipo de centro</span>
           </h2>
           <p className="text-lg text-neutral-text">
-            Sin permanencia. Sin costes ocultos. Empieza con 14 días gratis en cualquier plan.
-          </p>
-          <p className="text-sm text-primary font-medium mt-2">
-            Ahorra 2 meses con el plan anual
+            Empieza con 14 días gratis. Sin tarjeta de crédito, sin compromiso, sin permanencia.
           </p>
         </div>
 
@@ -98,7 +93,7 @@ export default function Pricing() {
               {plan.highlighted && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 px-4 py-1.5 bg-accent text-secondary text-xs font-bold rounded-full shadow-lg">
                   <Star size={12} className="fill-current" />
-                  Más popular
+                  Recomendado
                 </div>
               )}
 
@@ -106,33 +101,29 @@ export default function Pricing() {
                 {plan.name}
               </h3>
               <p className={`text-sm mb-6 ${plan.highlighted ? 'text-white/70' : 'text-neutral-text'}`}>
-                {plan.description}
+                {plan.target}
               </p>
-
-              <div className="mb-8">
-                <span className={`text-4xl lg:text-5xl font-extrabold ${plan.highlighted ? 'text-white' : 'text-secondary'}`}>
-                  €{plan.price}
-                </span>
-                <span className={`text-sm ${plan.highlighted ? 'text-white/60' : 'text-neutral-text'}`}>
-                  {plan.period}
-                </span>
-                {plan.annualPrice && (
-                  <div className={`text-sm mt-1 ${plan.highlighted ? 'text-white/60' : 'text-neutral-text'}`}>
-                    o €{plan.annualPrice}/año
-                  </div>
-                )}
-              </div>
 
               <ul className="space-y-3 mb-8">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3">
+                  <li key={feature.text} className="flex items-start gap-3">
                     <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${
-                      plan.highlighted ? 'bg-white/20' : 'bg-primary/10'
+                      feature.included
+                        ? plan.highlighted ? 'bg-white/20' : 'bg-primary/10'
+                        : plan.highlighted ? 'bg-white/10' : 'bg-gray-100'
                     }`}>
-                      <Check size={12} className={plan.highlighted ? 'text-white' : 'text-primary'} />
+                      {feature.included ? (
+                        <Check size={12} className={plan.highlighted ? 'text-white' : 'text-primary'} />
+                      ) : (
+                        <X size={10} className={plan.highlighted ? 'text-white/40' : 'text-gray-300'} />
+                      )}
                     </div>
-                    <span className={`text-sm ${plan.highlighted ? 'text-white/90' : 'text-neutral-text'}`}>
-                      {feature}
+                    <span className={`text-sm ${
+                      feature.included
+                        ? plan.highlighted ? 'text-white/90' : 'text-neutral-text'
+                        : plan.highlighted ? 'text-white/40 line-through' : 'text-gray-300 line-through'
+                    }`}>
+                      {feature.text}
                     </span>
                   </li>
                 ))}
