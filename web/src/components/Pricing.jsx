@@ -4,54 +4,56 @@ import { useScrollReveal } from '../hooks/useScrollReveal'
 const plans = [
   {
     name: 'Básico',
-    description: 'Ideal para profesionales independientes y consultas pequeñas.',
-    price: '29',
+    description: 'Ideal para profesionales independientes y consultorios pequeños.',
+    price: '18',
     period: '/mes',
+    annualPrice: '180',
     features: [
-      '1 profesional',
+      'Hasta 2 profesionales',
       'Hasta 100 pacientes',
-      'Gestión de citas',
-      'Historial clínico básico',
-      'Soporte por email',
+      'Citas ilimitadas',
+      'Historial clínico completo',
+      'Recordatorios por email',
       'Cumplimiento RGPD',
+      '100 MB almacenamiento',
     ],
     cta: 'Comenzar gratis',
     highlighted: false,
   },
   {
     name: 'Profesional',
-    description: 'Para clínicas y farmacias en crecimiento que necesitan más.',
-    price: '69',
+    description: 'Para clínicas y farmacias en crecimiento.',
+    price: '38',
     period: '/mes',
+    annualPrice: '380',
     features: [
       'Hasta 5 profesionales',
-      'Pacientes ilimitados',
-      'Gestión de citas avanzada',
+      'Hasta 500 pacientes',
+      'Citas ilimitadas',
       'Historial clínico completo',
-      'Episodios clínicos',
-      'Documentos en la nube',
-      'Notificaciones push y email',
+      'Sincronización de calendario',
+      'WhatsApp y email',
       'Panel de estadísticas',
-      'Soporte prioritario',
+      '1 GB almacenamiento',
     ],
     cta: 'Solicitar demo',
     highlighted: true,
   },
   {
-    name: 'Empresa',
-    description: 'Para centros con múltiples sedes y equipos grandes.',
-    price: 'Personalizado',
-    period: '',
+    name: 'Enterprise',
+    description: 'Para organizaciones grandes con necesidades avanzadas.',
+    price: '75',
+    period: '/mes',
+    annualPrice: '750',
     features: [
-      'Profesionales ilimitados',
-      'Multi-organización',
+      'Hasta 25 profesionales',
+      'Hasta 10.000 pacientes',
       'Todas las funcionalidades',
-      'Autenticación biométrica',
-      'WhatsApp Business',
-      'API personalizada',
-      'Formación del equipo',
-      'Gestor de cuenta dedicado',
-      'SLA garantizado',
+      'WhatsApp + SMS (200/mes)',
+      'Acceso API',
+      'Marca blanca',
+      'Panel de estadísticas',
+      '10 GB almacenamiento',
     ],
     cta: 'Contactar ventas',
     highlighted: false,
@@ -74,7 +76,10 @@ export default function Pricing() {
             <span className="gradient-text">tu negocio</span>
           </h2>
           <p className="text-lg text-neutral-text">
-            Sin permanencia. Sin costes ocultos. Empieza con 30 días gratis en cualquier plan.
+            Sin permanencia. Sin costes ocultos. Empieza con 14 días gratis en cualquier plan.
+          </p>
+          <p className="text-sm text-primary font-medium mt-2">
+            Ahorra 2 meses con el plan anual
           </p>
         </div>
 
@@ -106,12 +111,15 @@ export default function Pricing() {
 
               <div className="mb-8">
                 <span className={`text-4xl lg:text-5xl font-extrabold ${plan.highlighted ? 'text-white' : 'text-secondary'}`}>
-                  {plan.price === 'Personalizado' ? '' : '€'}{plan.price}
+                  €{plan.price}
                 </span>
-                {plan.period && (
-                  <span className={`text-sm ${plan.highlighted ? 'text-white/60' : 'text-neutral-text'}`}>
-                    {plan.period}
-                  </span>
+                <span className={`text-sm ${plan.highlighted ? 'text-white/60' : 'text-neutral-text'}`}>
+                  {plan.period}
+                </span>
+                {plan.annualPrice && (
+                  <div className={`text-sm mt-1 ${plan.highlighted ? 'text-white/60' : 'text-neutral-text'}`}>
+                    o €{plan.annualPrice}/año
+                  </div>
                 )}
               </div>
 
