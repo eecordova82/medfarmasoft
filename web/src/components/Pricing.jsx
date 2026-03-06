@@ -3,6 +3,24 @@ import { useScrollReveal } from '../hooks/useScrollReveal'
 
 const plans = [
   {
+    name: 'Trial',
+    target: 'Prueba el sistema sin compromiso durante 14 días',
+    trial: true,
+    features: [
+      { text: '1 profesional', included: true },
+      { text: 'Hasta 20 pacientes', included: true },
+      { text: 'Citas ilimitadas', included: true },
+      { text: 'Historial clínico completo', included: true },
+      { text: 'Horarios profesionales', included: true },
+      { text: 'Recordatorios por email', included: true },
+      { text: 'Consentimientos RGPD', included: true },
+      { text: 'Recordatorios WhatsApp', included: false },
+      { text: 'Panel de estadísticas', included: false },
+    ],
+    cta: 'Empezar gratis',
+    highlighted: false,
+  },
+  {
     name: 'Básico',
     target: 'Profesionales autónomos y consultorios pequeños',
     features: [
@@ -17,7 +35,7 @@ const plans = [
       { text: 'Panel de estadísticas', included: false },
       { text: 'API REST', included: false },
     ],
-    cta: 'Comenzar gratis',
+    cta: 'Solicitar demo',
     highlighted: false,
   },
   {
@@ -79,7 +97,7 @@ export default function Pricing() {
         </div>
 
         {/* Pricing cards */}
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
           {plans.map((plan, index) => (
             <div
               key={plan.name}
@@ -94,6 +112,11 @@ export default function Pricing() {
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 px-4 py-1.5 bg-accent text-secondary text-xs font-bold rounded-full shadow-lg">
                   <Star size={12} className="fill-current" />
                   Recomendado
+                </div>
+              )}
+              {plan.trial && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 inline-flex items-center gap-1 px-4 py-1.5 bg-emerald-500 text-white text-xs font-bold rounded-full shadow-lg">
+                  14 días gratis
                 </div>
               )}
 
