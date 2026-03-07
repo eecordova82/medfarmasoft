@@ -11,6 +11,7 @@ import {
   Pill,
   ClipboardList,
   MessageSquare,
+  Mic,
 } from 'lucide-react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
@@ -80,6 +81,12 @@ const features = [
     title: 'Gestión de Profesionales',
     description: 'Administra médicos, nutricionistas y farmacéuticos con sus especialidades y horarios.',
     color: 'bg-orange-50 text-orange-600',
+  },
+  {
+    icon: Mic,
+    title: 'Notas por Voz',
+    description: 'Dicta notas clínicas directamente en la consulta. Reconocimiento de voz integrado en español, inglés y catalán.',
+    color: 'bg-violet-50 text-violet-600',
   },
   {
     icon: MessageSquare,

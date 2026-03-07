@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(kubectl config get-contexts)",
+      "Bash(kubectl top nodes --context EMAZWEGEDGEPAKS01-aks)",
+      "Bash(kubectl describe nodes --context EMAZWEGEDGEPAKS01-aks)",
+      "Bash(kubectl get nodes --context EMAZWEGEDGEPAKS01-aks -o custom-columns=\"NODE:.metadata.name,POOL:.metadata.labels.agentpool,CPU-CAP:.status.capacity.cpu,MEM-CAP:.status.capacity.memory,GPU:.status.capacity.nvidia\\\\.com/gpu\")",
+      "Bash(kubectl get nodes --context EMAZWEGEDGEPAKS01-aks -o custom-columns=\"NODE:.metadata.name,POOL:.metadata.labels.agentpool,CPU:.status.capacity.cpu,MEM-GiB:.status.capacity.memory,GPU:.status.capacity.nvidia\\\\.com/gpu\")",
+      "Bash(kubectl get hpa -A --context EMAZWEGEDGEPAKS01-aks)",
+      "Bash(kubectl get deployment triton-server gedge-videocheck-ai-worker -n gedge --context EMAZWEGEDGEPAKS01-aks -o custom-columns=\"NAME:.metadata.name,REPLICAS:.spec.replicas,READY:.status.readyReplicas,CPU-REQ:.spec.template.spec.containers[0].resources.requests.cpu,CPU-LIM:.spec.template.spec.containers[0].resources.limits.cpu,MEM-REQ:.spec.template.spec.containers[0].resources.requests.memory,MEM-LIM:.spec.template.spec.containers[0].resources.limits.memory\")"
+    ]
+  }
+}
