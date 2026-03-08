@@ -34,8 +34,8 @@ export default function Hero() {
             </h1>
 
             <p className="text-lg lg:text-xl text-white/80 max-w-xl mx-auto lg:mx-0 mb-8 animate-fade-in-up animate-delay-200">
-              Citas, pacientes, historial clínico y recordatorios WhatsApp en una app nativa multiplataforma.
-              Desde consultorios independientes hasta policlínicas. 100% en español, cumplimiento RGPD total.
+              Citas, pacientes, historial clínico, medicación, facturación y recordatorios WhatsApp en una app nativa multiplataforma.
+              Con sincronización de Google Calendar, dictado por voz, auditoría completa y cumplimiento RGPD total.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up animate-delay-300">
@@ -66,7 +66,7 @@ export default function Hero() {
                 <div className="text-white/60 text-sm mt-1">Plataformas</div>
               </div>
               <div>
-                <div className="text-2xl lg:text-3xl font-bold text-white">35+</div>
+                <div className="text-2xl lg:text-3xl font-bold text-white">40+</div>
                 <div className="text-white/60 text-sm mt-1">Funcionalidades</div>
               </div>
               <div>

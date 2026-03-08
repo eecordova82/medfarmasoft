@@ -1,11 +1,11 @@
-import { Smartphone, Monitor, Apple, TabletSmartphone } from 'lucide-react'
+import { Smartphone, Monitor, Apple } from 'lucide-react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
 const platforms = [
   {
     icon: Smartphone,
     name: 'Android',
-    version: 'API 21+',
+    version: 'API 23+',
     description: 'Compatible con la mayoría de dispositivos Android del mercado.',
     gradient: 'from-green-500 to-green-400',
     bg: 'bg-green-50',
@@ -21,18 +21,10 @@ const platforms = [
   {
     icon: Monitor,
     name: 'Windows',
-    version: 'Windows 10+',
+    version: 'Windows 10+ Enterprise',
     description: 'Aplicación de escritorio completa para estaciones de trabajo.',
     gradient: 'from-blue-600 to-blue-400',
     bg: 'bg-blue-50',
-  },
-  {
-    icon: TabletSmartphone,
-    name: 'macOS',
-    version: 'macOS 14.0+',
-    description: 'Aplicación nativa optimizada para el ecosistema Apple.',
-    gradient: 'from-purple-600 to-purple-400',
-    bg: 'bg-purple-50',
   },
 ]
 
@@ -53,7 +45,7 @@ export default function Platforms() {
               <span className="gradient-text">todas las plataformas</span>
             </h2>
             <p className="text-lg text-neutral-text mb-8">
-              MedFarmaSoft funciona de forma nativa en Android, iOS, Windows y macOS.
+              MedFarmaSoft funciona de forma nativa en Android, iOS y Windows.
               Tus datos se sincronizan en tiempo real y puedes trabajar desde cualquier
               dispositivo sin perder información.
             </p>

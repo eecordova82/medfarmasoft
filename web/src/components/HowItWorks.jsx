@@ -20,14 +20,14 @@ const steps = [
     number: '03',
     icon: CalendarDays,
     title: 'Gestiona tu agenda',
-    description: 'Organiza citas, registra pacientes y documenta cada consulta con historial clínico completo.',
+    description: 'Organiza citas con sincronización Google/Outlook, registra pacientes, dicta notas por voz y documenta episodios clínicos.',
     color: 'from-accent to-accent-light',
   },
   {
     number: '04',
     icon: BarChart3,
     title: 'Analiza y crece',
-    description: 'Consulta estadísticas, genera informes y toma decisiones basadas en datos reales de tu negocio.',
+    description: 'Consulta KPIs, informes de ocupación, auditoría de acciones y toma decisiones basadas en datos reales.',
     color: 'from-emerald-500 to-emerald-400',
   },
 ]

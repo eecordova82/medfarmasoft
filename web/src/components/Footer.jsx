@@ -14,6 +14,7 @@ const footerLinks = {
   ],
   Legal: [
     { label: 'Aviso legal', href: '/legal/aviso-legal.html' },
+    { label: 'Términos de servicio', href: '/legal/terminos.html' },
     { label: 'Política de privacidad', href: '/legal/privacy.html' },
     { label: 'Política de cookies', href: '/legal/cookies.html' },
   ],

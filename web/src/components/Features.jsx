@@ -12,6 +12,12 @@ import {
   ClipboardList,
   MessageSquare,
   Mic,
+  CreditCard,
+  CalendarSync,
+  Activity,
+  ShieldCheck,
+  ScrollText,
+  PillBottle,
 } from 'lucide-react'
 import { useScrollReveal } from '../hooks/useScrollReveal'
 
@@ -19,31 +25,37 @@ const features = [
   {
     icon: CalendarDays,
     title: 'Gestión de Citas',
-    description: 'Calendario semanal y mensual con gestión completa de horarios, estados y recordatorios automáticos.',
+    description: 'Calendario semanal y mensual con gestión completa de horarios, estados y recordatorios automáticos por email, SMS y WhatsApp.',
     color: 'bg-primary/10 text-primary',
   },
   {
     icon: Users,
     title: 'Gestión de Pacientes',
-    description: 'Perfiles completos con datos personales, alergias, condiciones médicas y seguimiento integral.',
+    description: 'Perfiles completos con datos personales, alergias, medicación activa, documentos y seguimiento integral.',
     color: 'bg-blue-50 text-blue-600',
   },
   {
     icon: FileText,
     title: 'Historial Clínico',
-    description: 'Registros estructurados en 6 pestañas: episodios, antecedentes, medicación, alergias y más.',
+    description: 'Registros estructurados en 6 pestañas: episodios, antecedentes, medicación, alergias, documentos y más.',
     color: 'bg-purple-50 text-purple-600',
   },
   {
     icon: Stethoscope,
     title: 'Episodios Clínicos',
-    description: 'Consultas detalladas con autoguardado cada 30 segundos. Nunca pierdes información.',
+    description: 'Consultas detalladas con autoguardado cada 30 segundos y dictado por voz. Nunca pierdes información.',
     color: 'bg-red-50 text-red-600',
+  },
+  {
+    icon: PillBottle,
+    title: 'Medicación y Dispensación',
+    description: 'Seguimiento de medicación activa, notas farmacéuticas e historial de dispensaciones con control de cantidades.',
+    color: 'bg-lime-50 text-lime-600',
   },
   {
     icon: Building2,
     title: 'Multi-Organizaciones',
-    description: 'Sistema multi-tenant que permite gestionar múltiples clínicas o farmacias de forma independiente.',
+    description: 'Sistema multi-tenant con aislamiento total de datos. Gestiona múltiples clínicas o farmacias de forma independiente.',
     color: 'bg-indigo-50 text-indigo-600',
   },
   {
@@ -55,43 +67,73 @@ const features = [
   {
     icon: FolderOpen,
     title: 'Documentos en la Nube',
-    description: 'Almacenamiento seguro de documentos clínicos con Supabase. Accede desde cualquier dispositivo.',
+    description: 'Almacenamiento seguro de documentos clínicos en la nube. Accede desde cualquier dispositivo.',
     color: 'bg-amber-50 text-amber-600',
   },
   {
+    icon: CalendarSync,
+    title: 'Sincronización de Calendario',
+    description: 'Conecta Google Calendar y Microsoft Outlook para sincronización bidireccional de citas.',
+    color: 'bg-sky-50 text-sky-600',
+  },
+  {
     icon: Fingerprint,
-    title: 'Autenticación Biométrica',
-    description: 'Acceso seguro con huella dactilar, Face ID o Windows Hello. Máxima protección de datos.',
+    title: 'Seguridad Avanzada',
+    description: 'Autenticación biométrica (huella, Face ID, Windows Hello), PIN de acceso y gestión de roles y permisos.',
     color: 'bg-cyan-50 text-cyan-600',
   },
   {
     icon: BellRing,
-    title: 'Notificaciones',
-    description: 'Sistema de alertas push, email y WhatsApp para recordatorios de citas y comunicaciones.',
+    title: 'Notificaciones Multicanal',
+    description: 'Recordatorios automáticos por push, email, SMS y WhatsApp con horarios personalizables.',
     color: 'bg-rose-50 text-rose-600',
   },
   {
     icon: BarChart3,
-    title: 'Panel de Estadísticas',
-    description: 'Dashboard administrativo con métricas de rendimiento, auditoría y análisis de actividad.',
+    title: 'Informes y Estadísticas',
+    description: 'Dashboard con KPIs, gráficos de actividad, tasa de ocupación, servicios más utilizados y análisis de tendencias.',
     color: 'bg-teal-50 text-teal-600',
+  },
+  {
+    icon: CreditCard,
+    title: 'Suscripciones y Facturación',
+    description: 'Gestión de planes, ciclos de facturación, historial de pagos y control de uso en tiempo real.',
+    color: 'bg-pink-50 text-pink-600',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'RGPD y Consentimientos',
+    description: 'Generación de PDFs de consentimiento, firma digital, aceptación de políticas y trazabilidad legal completa.',
+    color: 'bg-green-50 text-green-600',
+  },
+  {
+    icon: ScrollText,
+    title: 'Auditoría y Trazabilidad',
+    description: 'Registro completo de acciones del sistema con filtros por usuario, fecha y tipo de operación.',
+    color: 'bg-stone-50 text-stone-600',
+  },
+  {
+    icon: Activity,
+    title: 'InBody Integration',
+    description: 'Integración con dispositivos InBody para importar mediciones de composición corporal de tus pacientes.',
+    color: 'bg-fuchsia-50 text-fuchsia-600',
   },
   {
     icon: ClipboardList,
     title: 'Gestión de Profesionales',
-    description: 'Administra médicos, nutricionistas y farmacéuticos con sus especialidades y horarios.',
+    description: 'Administra médicos, nutricionistas y farmacéuticos con sus especialidades, horarios y colores de agenda.',
     color: 'bg-orange-50 text-orange-600',
   },
   {
     icon: Mic,
     title: 'Notas por Voz',
-    description: 'Dicta notas clínicas directamente en la consulta. Reconocimiento de voz integrado en español, inglés y catalán.',
+    description: 'Dicta notas clínicas directamente en la consulta. Reconocimiento de voz en español, inglés y catalán.',
     color: 'bg-violet-50 text-violet-600',
   },
   {
     icon: MessageSquare,
     title: 'Comunicación Integrada',
-    description: 'Envía comunicaciones por email y WhatsApp directamente desde la aplicación.',
+    description: 'Envía comunicaciones por email y WhatsApp directamente desde la aplicación a pacientes y equipo.',
     color: 'bg-sky-50 text-sky-600',
   },
 ]
@@ -112,8 +154,8 @@ export default function Features() {
             <span className="gradient-text">una sola plataforma</span>
           </h2>
           <p className="text-lg text-neutral-text">
-            MedFarmaSoft reúne las herramientas esenciales para la gestión diaria de tu clínica o farmacia,
-            con un diseño intuitivo y cumplimiento normativo completo.
+            MedFarmaSoft integra más de 40 funcionalidades para la gestión completa de tu clínica o farmacia:
+            desde citas y medicación hasta facturación, auditoría y cumplimiento normativo.
           </p>
         </div>
 
