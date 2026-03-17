@@ -15,6 +15,9 @@ export function useBookingApi(tenantId) {
     /** Resuelve tenant por slug */
     getTenant: (slug) => apiFetch(`/api/public/tenant/${slug}`),
 
+    /** Resuelve tenant por dominio personalizado */
+    getTenantByDomain: (domain) => apiFetch(`/api/public/tenant-by-domain/${domain}`),
+
     /** Lista profesionales activos */
     getProfesionales: () => fetch('/api/public/profesionales'),
 

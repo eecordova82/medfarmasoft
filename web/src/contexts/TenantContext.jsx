@@ -16,6 +16,12 @@ export function TenantProvider({ children, tenant }) {
 
     document.title = `Reservar cita - ${tenant.nombre}`;
 
+    // Actualizar meta tags para SEO y previews
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.content = `Reserva tu cita online en ${tenant.nombre}`;
+    const metaKeys = document.querySelector('meta[name="keywords"]');
+    if (metaKeys) metaKeys.content = `reserva cita, ${tenant.nombre}, cita online`;
+
     if (tenant.logoUrl) {
       const favicon = document.querySelector('link[rel="icon"]');
       if (favicon) favicon.href = tenant.logoUrl;

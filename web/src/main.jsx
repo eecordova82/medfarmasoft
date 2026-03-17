@@ -6,13 +6,27 @@ import App from './App.jsx'
 import Subscribe from './pages/Subscribe.jsx'
 import BookingPage from './pages/BookingPage.jsx'
 
+// Si el hostname es un dominio personalizado de tenant (no medfarmasoft.es),
+// mostrar directamente la página de reservas en la raíz
+const hostname = window.location.hostname;
+const isCustomDomain = hostname !== 'localhost'
+  && hostname !== 'medfarmasoft.es'
+  && hostname !== 'www.medfarmasoft.es'
+  && !hostname.startsWith('localhost');
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/subscribe" element={<Subscribe />} />
-        <Route path="/reservar/:slug" element={<BookingPage />} />
+        {isCustomDomain ? (
+          <Route path="*" element={<BookingPage />} />
+        ) : (
+          <>
+            <Route path="/" element={<App />} />
+            <Route path="/subscribe" element={<Subscribe />} />
+            <Route path="/reservar/:slug" element={<BookingPage />} />
+          </>
+        )}
       </Routes>
     </BrowserRouter>
   </StrictMode>,

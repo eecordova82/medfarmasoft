@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Loader2, AlertCircle, ArrowLeft } from 'lucide-react';
+import { Loader2, AlertCircle, ArrowLeft, Phone } from 'lucide-react';
 import { TenantProvider } from '../contexts/TenantContext';
 import { useBookingApi } from '../hooks/useBookingApi';
 import BookingStepper from '../components/booking/BookingStepper';
@@ -39,11 +39,27 @@ export default function BookingPage() {
 
   const api = useBookingApi(tenant?.tenantId);
 
-  // 1. Resolver tenant por slug
+  // 1. Resolver tenant por slug o por dominio personalizado
   useEffect(() => {
-    if (!slug) return;
     setStatus('loading');
-    api.getTenant(slug)
+    const hostname = window.location.hostname;
+    const isCustomDomain = hostname !== 'localhost'
+      && hostname !== 'medfarmasoft.es'
+      && hostname !== 'www.medfarmasoft.es';
+
+    const resolve = isCustomDomain && !slug
+      ? api.getTenantByDomain(hostname)
+      : slug
+        ? api.getTenant(slug)
+        : null;
+
+    if (!resolve) {
+      setError('Workspace no encontrado');
+      setStatus('error');
+      return;
+    }
+
+    resolve
       .then((data) => {
         setTenant(data);
         setStatus('ready');
@@ -196,19 +212,28 @@ export default function BookingPage() {
       <div className="min-h-screen bg-gray-50">
         {/* Header con branding del tenant */}
         <header
-          className="text-white py-4 px-6"
+          className="py-4 px-6 shadow-lg"
           style={{ backgroundColor: 'var(--color-tenant-primary, #11756A)' }}
         >
           <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div className="flex items-center gap-3">
+            <button onClick={() => { setStep(1); setSelectedProfesional(null); setSelectedServicio(null); setSelectedDate(null); setSelectedSlot(null); }} className="flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity">
               {tenant?.logoUrl && (
-                <img src={tenant.logoUrl} alt={tenant.nombre} className="h-8" />
+                <img
+                  src={tenant.logoUrl}
+                  alt={tenant.nombre}
+                  className="h-12 rounded-lg object-contain bg-white p-1"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                />
               )}
-              <h1 className="text-lg font-semibold">{tenant?.nombre}</h1>
-            </div>
+              <div className="text-left">
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">{tenant?.nombre}</h1>
+                <p className="text-xs text-gray-800/70">Reserva tu cita online</p>
+              </div>
+            </button>
             {tenant?.telefono && (
-              <a href={`tel:${tenant.telefono}`} className="text-sm opacity-80 hover:opacity-100">
-                {tenant.telefono}
+              <a href={`tel:${tenant.telefono}`} className="hidden sm:flex items-center gap-2 bg-white rounded-full px-5 py-2.5 text-sm font-semibold text-gray-800 hover:shadow-lg transition-all">
+                <Phone className="w-4 h-4" style={{ color: 'var(--color-tenant-primary, #11756A)' }} />
+                {tenant.telefono.trim()}
               </a>
             )}
           </div>
@@ -308,10 +333,26 @@ export default function BookingPage() {
         </main>
 
         {/* Footer */}
-        <footer className="bg-gray-100 text-center py-4 text-sm text-gray-500 mt-auto">
-          {tenant?.direccion && <p>{tenant.direccion}</p>}
-          {tenant?.telefono && <p>{tenant.telefono}</p>}
-          <p className="text-xs mt-1 text-gray-400">Powered by MedFarmaSoft</p>
+        <footer
+          className="text-center py-5 text-sm mt-auto"
+          style={{ backgroundColor: 'var(--color-tenant-primary, #11756A)' }}
+        >
+          <div className="max-w-4xl mx-auto px-4 flex items-center justify-center gap-6">
+            {tenant?.telefono && (
+              <a href={`tel:${tenant.telefono}`} className="flex items-center gap-2 text-gray-900 font-medium hover:underline">
+                <Phone className="w-4 h-4" />
+                {tenant.telefono.trim()}
+              </a>
+            )}
+            {tenant?.urlWeb && (
+              <a href={tenant.urlWeb} className="text-gray-800/70 hover:text-gray-900 transition-colors">
+                {tenant.nombre}
+              </a>
+            )}
+          </div>
+          {tenant?.plan !== 'professional' && tenant?.plan !== 'enterprise' && (
+            <p className="text-xs mt-2 text-gray-800/50">Powered by MedFarmaSoft</p>
+          )}
         </footer>
       </div>
     </TenantProvider>
