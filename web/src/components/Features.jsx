@@ -53,6 +53,12 @@ const features = [
     color: 'bg-lime-50 text-lime-600',
   },
   {
+    icon: BellRing,
+    title: 'Dosificación y Recordatorios',
+    description: 'Planes de dosificación con recordatorios automáticos. El paciente registra sus tomas y el profesional monitoriza la adherencia.',
+    color: 'bg-yellow-50 text-yellow-600',
+  },
+  {
     icon: Building2,
     title: 'Multi-Organizaciones',
     description: 'Sistema multi-tenant con aislamiento total de datos. Gestiona múltiples clínicas o farmacias de forma independiente.',

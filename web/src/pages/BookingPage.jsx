@@ -129,8 +129,9 @@ export default function BookingPage() {
     setError('');
 
     try {
-      // Enviar la hora tal como la seleccionó el usuario (hora local del tenant)
-      // El mapper de la API (ConvertToUtc) convierte a UTC al guardar
+      // Enviar hora local del tenant tal cual, sin Z ni conversión
+      // El controller marca como Utc para evitar ConvertToUtc
+      // Así se guarda directamente en la DB como hora local (igual que MAUI)
       const year = selectedDate.getFullYear();
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
       const day = String(selectedDate.getDate()).padStart(2, '0');

@@ -104,14 +104,18 @@ export default function PatientForm({ onSubmit, loading }) {
         </div>
 
         {/* Honeypot - campo invisible para bots */}
-        <input
-          name="website"
-          tabIndex={-1}
-          autoComplete="off"
-          style={{ position: 'absolute', left: '-9999px', opacity: 0 }}
-          value={honeypot}
-          onChange={(e) => setHoneypot(e.target.value)}
-        />
+        <div aria-hidden="true" style={{ position: 'absolute', left: '-9999px', height: 0, overflow: 'hidden' }}>
+          <label htmlFor="b_url" style={{ display: 'none' }}>No rellenar</label>
+          <input
+            id="b_url"
+            name="b_url"
+            tabIndex={-1}
+            autoComplete="nope"
+            type="text"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
+        </div>
 
         {/* Captcha invisible (Cloudflare Turnstile) */}
         {TURNSTILE_SITE_KEY && (
