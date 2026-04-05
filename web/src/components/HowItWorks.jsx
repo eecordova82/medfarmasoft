@@ -85,6 +85,30 @@ export default function HowItWorks() {
             </div>
           ))}
         </div>
+
+        {/* Video tutorial */}
+        <div className="reveal mt-20 max-w-3xl mx-auto text-center">
+          <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
+            Tutorial
+          </p>
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-secondary mb-4">
+            Mira cómo acceder a tu espacio de trabajo
+          </h3>
+          <p className="text-neutral-text mb-8">
+            En menos de 2 minutos verás cómo entrar a tu cuenta y empezar a usar la plataforma.
+          </p>
+          <div className="relative rounded-2xl overflow-hidden shadow-xl border border-gray-100"
+               style={{ paddingBottom: '56.25%', height: 0 }}>
+            <iframe
+              src="https://www.youtube.com/embed/vVU98V42Apk"
+              title="Cómo acceder a tu espacio de trabajo - MedFarmaSoft"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
+            />
+          </div>
+        </div>
+
       </div>
     </section>
   )

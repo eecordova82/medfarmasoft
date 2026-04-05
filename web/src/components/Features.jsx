@@ -12,9 +12,7 @@ import {
   ClipboardList,
   MessageSquare,
   Mic,
-  CreditCard,
   CalendarSync,
-  Activity,
   ShieldCheck,
   ScrollText,
   PillBottle,
@@ -101,12 +99,6 @@ const features = [
     color: 'bg-teal-50 text-teal-600',
   },
   {
-    icon: CreditCard,
-    title: 'Suscripciones y Facturación',
-    description: 'Gestión de planes, ciclos de facturación, historial de pagos y control de uso en tiempo real.',
-    color: 'bg-pink-50 text-pink-600',
-  },
-  {
     icon: ShieldCheck,
     title: 'RGPD y Consentimientos',
     description: 'Generación de PDFs de consentimiento, firma digital, aceptación de políticas y trazabilidad legal completa.',
@@ -117,12 +109,6 @@ const features = [
     title: 'Auditoría y Trazabilidad',
     description: 'Registro completo de acciones del sistema con filtros por usuario, fecha y tipo de operación.',
     color: 'bg-stone-50 text-stone-600',
-  },
-  {
-    icon: Activity,
-    title: 'InBody Integration',
-    description: 'Integración con dispositivos InBody para importar mediciones de composición corporal de tus pacientes.',
-    color: 'bg-fuchsia-50 text-fuchsia-600',
   },
   {
     icon: ClipboardList,
@@ -161,7 +147,7 @@ export default function Features() {
           </h2>
           <p className="text-lg text-neutral-text">
             MedFarmaSoft integra más de 40 funcionalidades para la gestión completa de tu clínica o farmacia:
-            desde citas y medicación hasta facturación, auditoría y cumplimiento normativo.
+            desde citas y medicación hasta auditoría y cumplimiento normativo.
           </p>
         </div>
 

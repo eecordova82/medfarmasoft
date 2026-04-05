@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.medfarmasoft.app",
+      "sha256_cert_fingerprints": [
+        "6A:19:67:91:93:F7:93:1F:3B:EC:0A:17:BB:DF:5C:AA:8C:34:B4:34:AA:38:03:52:56:99:7E:47:2A:EE:32:11"
+      ]
+    }
+  }
+]
