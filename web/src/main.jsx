@@ -1,11 +1,13 @@
-import { StrictMode } from 'react'
+import { StrictMode, lazy, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
-import Subscribe from './pages/Subscribe.jsx'
 import BookingPage from './pages/BookingPage.jsx'
-import AccesoPage from './pages/AccesoPage.jsx'
+
+const Subscribe = lazy(() => import('./pages/Subscribe.jsx'))
+const AccesoPage = lazy(() => import('./pages/AccesoPage.jsx'))
+const RegistroPage = lazy(() => import('./pages/RegistroPage.jsx'))
 
 // Si el hostname es un dominio personalizado de tenant (no medfarmasoft.es),
 // mostrar directamente la página de reservas en la raíz
@@ -18,18 +20,21 @@ const isCustomDomain = hostname !== 'localhost'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        {isCustomDomain ? (
-          <Route path="*" element={<BookingPage />} />
-        ) : (
-          <>
-            <Route path="/" element={<App />} />
-            <Route path="/subscribe" element={<Subscribe />} />
-            <Route path="/reservar/:slug" element={<BookingPage />} />
-            <Route path="/acceso/:tenant" element={<AccesoPage />} />
-          </>
-        )}
-      </Routes>
+      <Suspense fallback={null}>
+        <Routes>
+          {isCustomDomain ? (
+            <Route path="*" element={<BookingPage />} />
+          ) : (
+            <>
+              <Route path="/" element={<App />} />
+              <Route path="/subscribe" element={<Subscribe />} />
+              <Route path="/reservar/:slug" element={<BookingPage />} />
+              <Route path="/acceso/:tenant" element={<AccesoPage />} />
+              <Route path="/registro" element={<RegistroPage />} />
+            </>
+          )}
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   </StrictMode>,
 )

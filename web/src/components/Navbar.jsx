@@ -55,8 +55,18 @@ export default function Navbar() {
               </a>
             ))}
             <a
+              href="/registro"
+              className={`ml-2 px-5 py-2.5 border font-semibold rounded-full text-sm transition-all ${
+                scrolled
+                  ? 'border-primary text-primary hover:bg-primary/5'
+                  : 'border-white/60 text-white hover:bg-white/10'
+              }`}
+            >
+              Registrarse
+            </a>
+            <a
               href="#contact"
-              className="ml-4 px-6 py-2.5 bg-accent hover:bg-accent-light text-secondary font-semibold rounded-full text-sm transition-all hover:shadow-lg hover:shadow-accent/25"
+              className="ml-2 px-6 py-2.5 bg-accent hover:bg-accent-light text-secondary font-semibold rounded-full text-sm transition-all hover:shadow-lg hover:shadow-accent/25"
             >
               Solicitar Demo
             </a>
@@ -93,9 +103,16 @@ export default function Navbar() {
             </a>
           ))}
           <a
+            href="/registro"
+            onClick={() => setIsOpen(false)}
+            className="block text-center mt-3 px-6 py-3 border border-primary text-primary hover:bg-primary/5 font-semibold rounded-full transition-all"
+          >
+            Registrarse gratis
+          </a>
+          <a
             href="#contact"
             onClick={() => setIsOpen(false)}
-            className="block text-center mt-3 px-6 py-3 bg-accent hover:bg-accent-light text-secondary font-semibold rounded-full transition-all"
+            className="block text-center mt-2 px-6 py-3 bg-accent hover:bg-accent-light text-secondary font-semibold rounded-full transition-all"
           >
             Solicitar Demo
           </a>

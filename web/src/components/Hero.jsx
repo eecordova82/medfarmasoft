@@ -40,10 +40,10 @@ export default function Hero() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start animate-fade-in-up animate-delay-300">
               <a
-                href="#contact"
+                href="/registro"
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-accent hover:bg-accent-light text-secondary font-bold rounded-full text-lg transition-all hover:shadow-xl hover:shadow-accent/25 hover:-translate-y-0.5"
               >
-                Comenzar ahora
+                Empezar gratis
                 <ArrowRight size={20} />
               </a>
               <a
