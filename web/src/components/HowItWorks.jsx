@@ -87,7 +87,7 @@ export default function HowItWorks() {
         </div>
 
         {/* Video tutorial */}
-        <div className="reveal mt-20 max-w-3xl mx-auto text-center">
+        <div id="tutorial" className="reveal mt-20 max-w-3xl mx-auto text-center">
           <p className="text-sm font-semibold text-primary uppercase tracking-widest mb-3">
             Tutorial
           </p>

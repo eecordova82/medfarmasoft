@@ -6,6 +6,7 @@ const navLinks = [
   { label: 'Por qué nosotros', href: '#why-us' },
   { label: 'Planes', href: '#pricing' },
   { label: 'Cómo funciona', href: '#how-it-works' },
+  { label: 'Tutorial', href: '#tutorial' },
   { label: 'Contacto', href: '#contact' },
 ]
 
