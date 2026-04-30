@@ -37,6 +37,10 @@ export default function BookingPage() {
   const [reservaId, setReservaId] = useState(null);
   const [patientEmail, setPatientEmail] = useState('');
 
+  // Profesionales disponibles para el servicio seleccionado
+  // Si el servicio tiene asignados → solo esos. Si no → todos.
+  const [profesionalesDelServicio, setProfesionalesDelServicio] = useState([]);
+
   const api = useBookingApi(tenant?.tenantId);
 
   // 1. Resolver tenant por slug o por dominio personalizado
@@ -78,7 +82,7 @@ export default function BookingPage() {
       .catch((err) => console.error('Error cargando profesionales:', err));
   }, [tenant?.tenantId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 3. Cargar servicios cuando el tenant está resuelto
+  // 3. Cargar servicios (con sus profesionales asignados)
   useEffect(() => {
     if (!tenant?.tenantId) return;
     api.getServicios()
@@ -86,7 +90,39 @@ export default function BookingPage() {
       .catch((err) => console.error('Error cargando servicios:', err));
   }, [tenant?.tenantId]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // 4. Cargar disponibilidad cuando se selecciona fecha o se vuelve al paso 3
+  // 4. Cuando se selecciona un servicio, resolver qué profesionales aplican
+  useEffect(() => {
+    if (!selectedServicio) return;
+
+    const asignados = selectedServicio.profesionales ?? [];
+
+    if (asignados.length === 1) {
+      // Un solo profesional asignado → preseleccionar automáticamente
+      const profAsignado = profesionales.find(p => p.id === asignados[0].profesionalId);
+      if (profAsignado) {
+        setSelectedProfesional(profAsignado);
+        setProfesionalesDelServicio([profAsignado]);
+      }
+    } else if (asignados.length > 1) {
+      // Varios profesionales → filtrar la lista y preseleccionar el defecto si existe
+      const profsFiltrados = profesionales.filter(p =>
+        asignados.some(a => a.profesionalId === p.id)
+      );
+      setProfesionalesDelServicio(profsFiltrados);
+
+      const defecto = asignados.find(a => a.esDefecto);
+      if (defecto) {
+        const profDefecto = profsFiltrados.find(p => p.id === defecto.profesionalId);
+        if (profDefecto) setSelectedProfesional(profDefecto);
+      }
+    } else {
+      // Sin asignados → todos los profesionales
+      setProfesionalesDelServicio(profesionales);
+      setSelectedProfesional(null);
+    }
+  }, [selectedServicio?.id, profesionales]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // 5. Cargar disponibilidad cuando se selecciona fecha (paso 3)
   useEffect(() => {
     if (step !== 3 || !selectedDate || !selectedProfesional || !selectedServicio) return;
 
@@ -109,7 +145,26 @@ export default function BookingPage() {
 
   const handleSelectServicio = (svc) => {
     setSelectedServicio(svc);
-    setStep(3);
+
+    const asignados = svc.profesionales ?? [];
+
+    if (asignados.length === 1) {
+      // Profesional único → preseleccionar y saltar a disponibilidad
+      const prof = profesionales.find(p => p.id === asignados[0].profesionalId);
+      if (prof) setSelectedProfesional(prof);
+      setStep(3);
+    } else if (asignados.length > 1) {
+      const defecto = asignados.find(a => a.esDefecto);
+      if (defecto) {
+        const prof = profesionales.find(p => p.id === defecto.profesionalId);
+        if (prof) setSelectedProfesional(prof);
+      }
+      setStep(3);
+    } else {
+      // Sin asignados → elegir profesional manualmente
+      setSelectedProfesional(null);
+      setStep(3);
+    }
   };
 
   const handleSelectDate = (date) => {
@@ -117,8 +172,13 @@ export default function BookingPage() {
     setSelectedSlot(null);
   };
 
-  const handleSelectSlot = (hora) => {
+  const handleSelectSlot = (hora, profesionalDelSlot) => {
     setSelectedSlot(hora);
+    // Si el slot tiene profesional específico (disponibilidad combinada), usarlo
+    if (profesionalDelSlot) {
+      const prof = profesionales.find(p => p.id === profesionalDelSlot);
+      if (prof) setSelectedProfesional(prof);
+    }
     setStep(4);
   };
 
@@ -129,9 +189,6 @@ export default function BookingPage() {
     setError('');
 
     try {
-      // Enviar hora local del tenant tal cual, sin Z ni conversión
-      // El controller marca como Utc para evitar ConvertToUtc
-      // Así se guarda directamente en la DB como hora local (igual que MAUI)
       const year = selectedDate.getFullYear();
       const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
       const day = String(selectedDate.getDate()).padStart(2, '0');
@@ -181,6 +238,10 @@ export default function BookingPage() {
   const goBack = useCallback(() => {
     if (step > 1) setStep(step - 1);
   }, [step]);
+
+  // Determina si el selector de profesional debe ocultarse
+  // (servicio con un único profesional asignado)
+  const profesionalAutoseleccionado = selectedServicio?.profesionales?.length === 1;
 
   // --- Render ---
 
@@ -264,20 +325,42 @@ export default function BookingPage() {
           <div className="lg:grid lg:grid-cols-3 lg:gap-8">
             {/* Area principal */}
             <div className="lg:col-span-2">
+              {/* Paso 1: Elegir servicio (nuevo flujo principal) */}
               {step === 1 && (
-                <ProfessionalList
-                  profesionales={profesionales}
-                  onSelect={handleSelectProfesional}
-                />
-              )}
-              {step === 2 && (
                 <ServiceList
                   servicios={servicios}
                   onSelect={handleSelectServicio}
                 />
               )}
+
+              {/* Paso 2: Elegir profesional (solo si el servicio tiene varios o ninguno asignado) */}
+              {step === 2 && !profesionalAutoseleccionado && (
+                <div>
+                  {/* Indicador de profesional autoasignado */}
+                  {selectedProfesional && selectedServicio?.profesionales?.length > 0 && (
+                    <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800 flex items-center gap-2">
+                      <span>✓</span>
+                      <span>Tu cita será con <strong>{selectedProfesional.nombre} {selectedProfesional.apellidos}</strong> (por defecto para este servicio)</span>
+                    </div>
+                  )}
+                  <ProfessionalList
+                    profesionales={profesionalesDelServicio.length > 0 ? profesionalesDelServicio : profesionales}
+                    onSelect={handleSelectProfesional}
+                    selectedId={selectedProfesional?.id}
+                  />
+                </div>
+              )}
+
+              {/* Paso 3: Fecha y hora */}
               {step === 3 && (
                 <div>
+                  {/* Profesional autoseleccionado: informar al usuario */}
+                  {profesionalAutoseleccionado && selectedProfesional && (
+                    <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-center gap-2">
+                      <span>👤</span>
+                      <span>Tu cita será con <strong>{selectedProfesional.nombre} {selectedProfesional.apellidos}</strong></span>
+                    </div>
+                  )}
                   <AvailabilityCalendar
                     selectedDate={selectedDate}
                     onDateSelect={handleSelectDate}
@@ -292,6 +375,7 @@ export default function BookingPage() {
                   )}
                 </div>
               )}
+
               {step === 4 && (
                 <PatientForm
                   onSubmit={handleSubmitForm}
