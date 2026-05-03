@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservar Cita</title>
+    <meta name="description" content="Sistema de reservas de citas online">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #0E9488;
+            --primary-light: #14B8A6;
+            --primary-dark: #0A6B62;
+            --accent: #F5B800;
+            --accent-light: #FFD54F;
+            --secondary: #2C3E50;
+            --neutral: #64748B;
+            --light-bg: #F5F7FA;
+            --white: #ffffff;
+            --border: #E2E8F0;
+            --success: #10B981;
+            --error: #EF4444;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--light-bg);
+            color: var(--secondary);
+            min-height: 100vh;
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-overlay.hidden { display: none; }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error message */
+        .error-banner {
+            background: var(--error);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .error-banner.hidden { display: none; }
+
+        /* Header */
+        .header {
+            background: var(--white);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 20px;
+            overflow: hidden;
+        }
+
+        .logo-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+
+        .header-title {
+            font-size: 1rem;
+            color: var(--neutral);
+            font-weight: 500;
+        }
+
+        /* Main container */
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        /* Progress bar */
+        .progress-container {
+            margin-bottom: 32px;
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+
+        .progress-step:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 50%;
+            width: 100%;
+            height: 2px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .progress-step.completed:not(:last-child)::after {
+            background: var(--primary);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--white);
+            border: 2px solid var(--border);
+            color: var(--neutral);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(17, 117, 106, 0.15);
+        }
+
+        .progress-step.completed .step-number {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: var(--neutral);
+            margin-top: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        @media (min-width: 640px) {
+            .step-label { display: block; }
+        }
+
+        .progress-step.active .step-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Card */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .card-header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 4px;
+        }
+
+        .card-header p {
+            font-size: 0.9rem;
+            color: var(--neutral);
+        }
+
+        .card-body {
+            padding: 24px 28px;
+        }
+
+        .card-footer {
+            padding: 20px 28px;
+            background: var(--light-bg);
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        /* Search input */
+        .search-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(17, 117, 106, 0.1);
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral);
+        }
+
+        /* Service list */
+        .service-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .service-item:hover {
+            border-color: var(--primary-light);
+            background: rgba(17, 117, 106, 0.02);
+        }
+
+        .service-item.selected {
+            border-color: var(--primary);
+            background: rgba(17, 117, 106, 0.05);
+        }
+
+        .service-radio {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            margin-right: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .service-item.selected .service-radio {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .service-item.selected .service-radio::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .service-info {
+            flex: 1;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 2px;
+        }
+
+        .service-meta {
+            font-size: 13px;
+            color: var(--neutral);
+        }
+
+        .service-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        /* Professional chips */
+        .professional-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .professional-chip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .professional-chip:hover {
+            border-color: var(--primary-light);
+            background: rgba(17, 117, 106, 0.02);
+        }
+
+        .professional-chip.selected {
+            border-color: var(--primary);
+            background: rgba(17, 117, 106, 0.05);
+        }
+
+        .professional-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .professional-chip.no-preference .professional-avatar {
+            background: var(--neutral);
+        }
+
+        .professional-name {
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .professional-specialty {
+            font-size: 12px;
+            color: var(--neutral);
+            margin-top: 2px;
+        }
+
+        /* Calendar */
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .calendar-nav button {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--light-bg);
+            border-color: var(--primary);
+        }
+
+        .calendar-month {
+            font-weight: 600;
+            color: var(--secondary);
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .calendar-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 24px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--neutral);
+            padding: 8px;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .calendar-day:hover:not(.disabled):not(.empty) {
+            background: var(--light-bg);
+        }
+
+        .calendar-day.disabled {
+            color: var(--border);
+            cursor: not-allowed;
+        }
+
+        .calendar-day.empty {
+            cursor: default;
+        }
+
+        .calendar-day.today {
+            background: var(--light-bg);
+            font-weight: 600;
+        }
+
+        .calendar-day.selected {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Time slots */
+        .slots-section h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 12px;
+        }
+
+        .slots-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .slots-grid.empty {
+            padding: 20px;
+            background: var(--light-bg);
+            border-radius: 8px;
+            text-align: center;
+            color: var(--neutral);
+        }
+
+        .time-slot {
+            padding: 10px 18px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .time-slot:hover {
+            border-color: var(--primary-light);
+            background: rgba(17, 117, 106, 0.02);
+        }
+
+        .time-slot.selected {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Form */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 500px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(17, 117, 106, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-top: 2px;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-group label {
+            font-size: 13px;
+            color: var(--neutral);
+            line-height: 1.5;
+        }
+
+        .checkbox-group a {
+            color: var(--primary);
+        }
+
+        /* OTP */
+        .otp-section {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .otp-section p {
+            font-size: 14px;
+            color: var(--neutral);
+            margin-bottom: 16px;
+        }
+
+        .otp-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .otp-inputs input {
+            width: 48px;
+            height: 56px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .otp-inputs input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(17, 117, 106, 0.1);
+        }
+
+        .otp-resend {
+            font-size: 13px;
+            color: var(--neutral);
+        }
+
+        .otp-resend a {
+            color: var(--primary);
+            cursor: pointer;
+        }
+
+        /* Confirmation */
+        .confirmation-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success), #34D399);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        .confirmation-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .confirmation-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--secondary);
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .confirmation-subtitle {
+            text-align: center;
+            color: var(--neutral);
+            margin-bottom: 32px;
+        }
+
+        .booking-summary {
+            background: var(--light-bg);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: var(--neutral);
+            font-size: 14px;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 14px;
+            text-align: right;
+        }
+
+        .calendar-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .calendar-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .calendar-btn:hover {
+            background: var(--light-bg);
+            border-color: var(--primary);
+        }
+
+        .cancellation-notice {
+            margin-top: 24px;
+            padding: 16px;
+            background: rgba(245, 184, 0, 0.1);
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--secondary);
+        }
+
+        .cancellation-notice strong {
+            color: var(--primary-dark);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 28px;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-primary:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-bg);
+        }
+
+        .btn-accent {
+            background: var(--accent);
+            color: var(--secondary);
+        }
+
+        .btn-accent:hover {
+            background: var(--accent-light);
+        }
+
+        /* Utilities */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-4 { margin-top: 16px; }
+    </style>
+</head>
+<body>
+    <!-- Loading overlay -->
+    <div class="loading-overlay" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Error banner -->
+    <div class="error-banner hidden" id="error-banner"></div>
+
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon" id="logo-icon">?</div>
+            <div class="logo-text" id="logo-text">Cargando...</div>
+        </div>
+        <div class="header-title">Reservar cita</div>
+    </header>
+
+    <main class="container">
+        <!-- Progress -->
+        <div class="progress-container">
+            <div class="progress-steps">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Servicio</div>
+                </div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Profesional</div>
+                </div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Fecha y hora</div>
+                </div>
+                <div class="progress-step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Tus datos</div>
+                </div>
+                <div class="progress-step" data-step="5">
+                    <div class="step-number">5</div>
+                    <div class="step-label">Confirmacion</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 1: Service -->
+        <div class="card step-card" id="step-1">
+            <div class="card-header">
+                <h2>Selecciona un servicio</h2>
+                <p>Elige el tipo de consulta que necesitas</p>
+            </div>
+            <div class="card-body">
+                <div class="search-box">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                    <input type="text" placeholder="Buscar servicio..." id="service-search">
+                </div>
+                <div class="service-list" id="service-list">
+                    <!-- Services loaded dynamically -->
+                </div>
+            </div>
+            <div class="card-footer">
+                <div></div>
+                <button class="btn btn-primary" id="next-1" disabled>
+                    Continuar
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m9 18 6-6-6-6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Professional -->
+        <div class="card step-card hidden" id="step-2">
+            <div class="card-header">
+                <h2>Elige un profesional</h2>
+                <p>Puedes elegir un profesional o dejar que asignemos el primero disponible</p>
+            </div>
+            <div class="card-body">
+                <div class="professional-grid" id="professional-grid">
+                    <!-- Professionals loaded dynamically -->
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-secondary" id="back-2">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m15 18-6-6 6-6"></path>
+                    </svg>
+                    Atras
+                </button>
+                <button class="btn btn-primary" id="next-2">
+                    Continuar
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m9 18 6-6-6-6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 3: Date/Time -->
+        <div class="card step-card hidden" id="step-3">
+            <div class="card-header">
+                <h2>Selecciona fecha y hora</h2>
+                <p>Elige el dia y la hora que mejor te convenga</p>
+            </div>
+            <div class="card-body">
+                <div class="calendar-controls">
+                    <div class="calendar-nav">
+                        <button id="prev-month">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m15 18-6-6 6-6"></path>
+                            </svg>
+                        </button>
+                        <span class="calendar-month" id="calendar-month">Enero 2026</span>
+                        <button id="next-month">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="calendar-filters">
+                        <select class="filter-select" id="modalidad-select">
+                            <option value="Presencial">Presencial</option>
+                            <option value="Telemedicina">Online</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="calendar-grid" id="calendar-grid">
+                    <!-- Calendar generated dynamically -->
+                </div>
+
+                <div class="slots-section">
+                    <h3>Horarios disponibles</h3>
+                    <div class="slots-grid" id="slots-grid">
+                        <p>Selecciona una fecha para ver los horarios disponibles</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-secondary" id="back-3">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m15 18-6-6 6-6"></path>
+                    </svg>
+                    Atras
+                </button>
+                <button class="btn btn-primary" id="next-3" disabled>
+                    Continuar
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m9 18 6-6-6-6"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: User Data -->
+        <div class="card step-card hidden" id="step-4">
+            <div class="card-header">
+                <h2>Tus datos</h2>
+                <p>Necesitamos algunos datos para confirmar tu cita</p>
+            </div>
+            <div class="card-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre">Nombre *</label>
+                        <input type="text" id="nombre" placeholder="Tu nombre" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apellidos">Apellidos</label>
+                        <input type="text" id="apellidos" placeholder="Tus apellidos">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefono">Telefono *</label>
+                        <input type="tel" id="telefono" placeholder="+34 600 000 000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email *</label>
+                        <input type="email" id="email" placeholder="tu@email.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="notas">Motivo de la consulta (opcional)</label>
+                    <textarea id="notas" placeholder="Breve descripcion del motivo de tu visita..."></textarea>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="consent" required>
+                    <label for="consent">
+                        He leido y acepto la <a href="/legal/privacy.html" target="_blank">politica de privacidad</a>
+                        y consiento el tratamiento de mis datos para la gestion de la cita.
+                    </label>
+                </div>
+
+                <div class="otp-section hidden" id="otp-section">
+                    <p>Hemos enviado un codigo de verificacion a tu email</p>
+                    <div class="otp-inputs">
+                        <input type="text" maxlength="1" class="otp-input">
+                        <input type="text" maxlength="1" class="otp-input">
+                        <input type="text" maxlength="1" class="otp-input">
+                        <input type="text" maxlength="1" class="otp-input">
+                        <input type="text" maxlength="1" class="otp-input">
+                        <input type="text" maxlength="1" class="otp-input">
+                    </div>
+                    <p class="otp-resend">No has recibido el codigo? <a id="resend-otp">Reenviar</a></p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-secondary" id="back-4">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m15 18-6-6 6-6"></path>
+                    </svg>
+                    Atras
+                </button>
+                <button class="btn btn-primary" id="send-code">
+                    Enviar codigo
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m9 18 6-6-6-6"></path>
+                    </svg>
+                </button>
+                <button class="btn btn-accent hidden" id="confirm-booking">
+                    Confirmar cita
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 6 9 17l-5-5"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 5: Confirmation -->
+        <div class="card step-card hidden" id="step-5">
+            <div class="card-body" style="padding: 40px 28px;">
+                <div class="confirmation-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M20 6 9 17l-5-5"></path>
+                    </svg>
+                </div>
+                <h2 class="confirmation-title">Cita confirmada!</h2>
+                <p class="confirmation-subtitle">Te hemos enviado un email con los detalles de tu cita</p>
+
+                <div class="booking-summary">
+                    <div class="summary-row">
+                        <span class="summary-label">Servicio</span>
+                        <span class="summary-value" id="sum-service">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Profesional</span>
+                        <span class="summary-value" id="sum-professional">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Fecha</span>
+                        <span class="summary-value" id="sum-date">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Hora</span>
+                        <span class="summary-value" id="sum-time">-</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Modalidad</span>
+                        <span class="summary-value" id="sum-modalidad">Presencial</span>
+                    </div>
+                </div>
+
+                <div class="calendar-actions">
+                    <button class="calendar-btn" id="add-to-gcal">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Anadir a Google Calendar
+                    </button>
+                </div>
+
+                <div class="cancellation-notice">
+                    <strong>Politica de cancelacion:</strong> Puedes cancelar o modificar tu cita hasta 24 horas antes sin coste.
+                    Cancelaciones con menos de 24 horas de antelacion podran conllevar un cargo del 50% del importe.
+                </div>
+            </div>
+            <div class="card-footer" style="justify-content: center;">
+                <a href="/" class="btn btn-primary">
+                    Volver a la pagina principal
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ==================== CONFIG ====================
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Get tenant from URL params or use default for testing
+        const urlParams = new URLSearchParams(window.location.search);
+        const TENANT_CODE = urlParams.get('tenant') || '11111111-11';
+
+        // ==================== STATE ====================
+        let currentStep = 1;
+        let tenantId = null;
+        let tenantConfig = null;
+        let services = [];
+        let professionals = [];
+        let selectedService = null;
+        let selectedProfessional = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        let selectedSlot = null;
+        let currentMonth = new Date();
+        let reservaId = null;
+
+        // ==================== DOM ELEMENTS ====================
+        const loadingEl = document.getElementById('loading');
+        const errorBannerEl = document.getElementById('error-banner');
+        const stepCards = document.querySelectorAll('.step-card');
+        const progressSteps = document.querySelectorAll('.progress-step');
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showLoading() {
+            loadingEl.classList.remove('hidden');
+        }
+
+        function hideLoading() {
+            loadingEl.classList.add('hidden');
+        }
+
+        function showError(message) {
+            errorBannerEl.textContent = message;
+            errorBannerEl.classList.remove('hidden');
+            setTimeout(() => errorBannerEl.classList.add('hidden'), 5000);
+        }
+
+        async function apiFetch(endpoint, options = {}) {
+            try {
+                const headers = {
+                    'Content-Type': 'application/json',
+                    ...options.headers
+                };
+
+                // Add tenant header if we have a tenant ID
+                if (tenantId) {
+                    headers['X-Tenant-Id'] = tenantId;
+                }
+
+                const response = await fetch(`${API_BASE}${endpoint}`, {
+                    ...options,
+                    headers
+                });
+
+                if (!response.ok) {
+                    const error = await response.json().catch(() => ({}));
+                    throw new Error(error.message || `Error ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('API Error:', error);
+                throw error;
+            }
+        }
+
+        function formatPrice(price) {
+            if (!price) return '';
+            return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(price);
+        }
+
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatDate(date) {
+            return date.toLocaleDateString('es-ES', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+
+        function getInitials(name) {
+            return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        }
+
+        // ==================== NAVIGATION ====================
+        function goToStep(step) {
+            currentStep = step;
+            stepCards.forEach(card => card.classList.add('hidden'));
+            document.getElementById(`step-${step}`).classList.remove('hidden');
+
+            progressSteps.forEach((ps, i) => {
+                ps.classList.remove('active', 'completed');
+                if (i + 1 < step) ps.classList.add('completed');
+                if (i + 1 === step) ps.classList.add('active');
+            });
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ==================== STEP 1: SERVICES ====================
+        async function loadServices() {
+            try {
+                services = await apiFetch('/Servicios');
+                renderServices();
+            } catch (error) {
+                showError('Error cargando servicios');
+            }
+        }
+
+        function renderServices() {
+            const container = document.getElementById('service-list');
+            container.innerHTML = services.map(service => `
+                <div class="service-item" data-id="${service.id}">
+                    <div class="service-radio"></div>
+                    <div class="service-info">
+                        <div class="service-name">${service.nombre}</div>
+                        <div class="service-meta">${service.duracionMinutos} min</div>
+                    </div>
+                    <div class="service-price">${formatPrice(service.precio)}</div>
+                </div>
+            `).join('');
+
+            // Add click handlers
+            container.querySelectorAll('.service-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    container.querySelectorAll('.service-item').forEach(s => s.classList.remove('selected'));
+                    item.classList.add('selected');
+                    selectedService = services.find(s => s.id === item.dataset.id);
+                    document.getElementById('next-1').disabled = false;
+                });
+            });
+        }
+
+        // Service search filter
+        document.getElementById('service-search').addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            document.querySelectorAll('.service-item').forEach(item => {
+                const name = item.querySelector('.service-name').textContent.toLowerCase();
+                item.style.display = name.includes(query) ? 'flex' : 'none';
+            });
+        });
+
+        // ==================== STEP 2: PROFESSIONALS ====================
+        async function loadProfessionals() {
+            try {
+                showLoading();
+                professionals = await apiFetch('/Profesionales');
+                renderProfessionals();
+            } catch (error) {
+                showError('Error cargando profesionales');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        function renderProfessionals() {
+            const container = document.getElementById('professional-grid');
+
+            // Add "no preference" option
+            let html = `
+                <div class="professional-chip no-preference selected" data-id="">
+                    <div class="professional-avatar">?</div>
+                    <div class="professional-name">Sin preferencia</div>
+                    <div class="professional-specialty">Primer disponible</div>
+                </div>
+            `;
+
+            html += professionals.map(prof => `
+                <div class="professional-chip" data-id="${prof.id}">
+                    <div class="professional-avatar">${getInitials(prof.nombre)}</div>
+                    <div class="professional-name">${prof.nombre}</div>
+                    <div class="professional-specialty">${prof.especialidad || ''}</div>
+                </div>
+            `).join('');
+
+            container.innerHTML = html;
+            selectedProfessional = null; // "sin preferencia" by default
+
+            // Add click handlers
+            container.querySelectorAll('.professional-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    container.querySelectorAll('.professional-chip').forEach(c => c.classList.remove('selected'));
+                    chip.classList.add('selected');
+                    const profId = chip.dataset.id;
+                    selectedProfessional = profId ? professionals.find(p => p.id === profId) : null;
+                });
+            });
+        }
+
+        // ==================== STEP 3: CALENDAR & AVAILABILITY ====================
+        function renderCalendar() {
+            const container = document.getElementById('calendar-grid');
+            const today = new Date();
+
+            // Update month display
+            const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+                               'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            document.getElementById('calendar-month').textContent =
+                `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
+
+            // Day headers
+            let html = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
+                .map(d => `<div class="calendar-day-header">${d}</div>`).join('');
+
+            // Get first day of month and total days
+            const firstDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1);
+            const lastDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
+
+            // Adjust for Monday start (0 = Monday in our grid)
+            let startDay = firstDay.getDay() - 1;
+            if (startDay < 0) startDay = 6;
+
+            // Empty cells before first day
+            for (let i = 0; i < startDay; i++) {
+                html += '<div class="calendar-day empty"></div>';
+            }
+
+            // Days of month
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const date = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), day);
+                const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const isToday = date.toDateString() === today.toDateString();
+                const isSelected = selectedDate && date.toDateString() === selectedDate.toDateString();
+
+                let classes = 'calendar-day';
+                if (isPast) classes += ' disabled';
+                if (isToday) classes += ' today';
+                if (isSelected) classes += ' selected';
+
+                html += `<div class="${classes}" data-date="${date.toISOString()}">${day}</div>`;
+            }
+
+            container.innerHTML = html;
+
+            // Add click handlers
+            container.querySelectorAll('.calendar-day:not(.disabled):not(.empty)').forEach(day => {
+                day.addEventListener('click', () => {
+                    container.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('selected'));
+                    day.classList.add('selected');
+                    selectedDate = new Date(day.dataset.date);
+                    loadAvailability();
+                });
+            });
+        }
+
+        async function loadAvailability() {
+            if (!selectedDate || !selectedService) return;
+
+            const slotsContainer = document.getElementById('slots-grid');
+            slotsContainer.innerHTML = '<div class="spinner" style="margin: 20px auto;"></div>';
+
+            try {
+                const dateStr = selectedDate.toISOString().split('T')[0];
+                const profParam = selectedProfessional ? `&profesionalId=${selectedProfessional.id}` : '';
+
+                const data = await apiFetch(`/Disponibilidad?fecha=${dateStr}&servicioId=${selectedService.id}${profParam}`);
+
+                const availableSlots = (data.slots || []).filter(s => s.disponible);
+
+                if (availableSlots.length === 0) {
+                    slotsContainer.innerHTML = '<p class="empty">No hay horarios disponibles para esta fecha</p>';
+                    slotsContainer.classList.add('empty');
+                    return;
+                }
+
+                slotsContainer.classList.remove('empty');
+                slotsContainer.innerHTML = availableSlots.map(slot => `
+                    <div class="time-slot" data-slot='${JSON.stringify(slot)}'>
+                        ${formatTime(slot.horaInicio)}
+                    </div>
+                `).join('');
+
+                // Add click handlers
+                slotsContainer.querySelectorAll('.time-slot').forEach(slotEl => {
+                    slotEl.addEventListener('click', () => {
+                        slotsContainer.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                        slotEl.classList.add('selected');
+                        selectedSlot = JSON.parse(slotEl.dataset.slot);
+                        selectedTime = formatTime(selectedSlot.horaInicio);
+                        document.getElementById('next-3').disabled = false;
+                    });
+                });
+
+            } catch (error) {
+                slotsContainer.innerHTML = '<p class="empty">Error cargando disponibilidad</p>';
+                slotsContainer.classList.add('empty');
+            }
+        }
+
+        // Calendar navigation
+        document.getElementById('prev-month').addEventListener('click', () => {
+            currentMonth.setMonth(currentMonth.getMonth() - 1);
+            renderCalendar();
+        });
+
+        document.getElementById('next-month').addEventListener('click', () => {
+            currentMonth.setMonth(currentMonth.getMonth() + 1);
+            renderCalendar();
+        });
+
+        // ==================== STEP 4: BOOKING ====================
+        async function createBooking() {
+            const nombre = document.getElementById('nombre').value.trim();
+            const apellidos = document.getElementById('apellidos').value.trim();
+            const telefono = document.getElementById('telefono').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const notas = document.getElementById('notas').value.trim();
+            const consent = document.getElementById('consent').checked;
+
+            if (!nombre || !telefono || !email || !consent) {
+                showError('Por favor completa todos los campos obligatorios');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                // If no professional selected, use first available (API will handle)
+                const profesionalId = selectedProfessional?.id || professionals[0]?.id;
+
+                const response = await apiFetch('/Reservas', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        profesionalId: profesionalId,
+                        servicioId: selectedService.id,
+                        fechaHora: selectedSlot.horaInicio,
+                        nombre: nombre,
+                        apellidos: apellidos || null,
+                        email: email,
+                        telefono: telefono,
+                        notas: notas || null
+                    })
+                });
+
+                reservaId = response.id;
+
+                // Show OTP section
+                document.getElementById('otp-section').classList.remove('hidden');
+                document.getElementById('send-code').classList.add('hidden');
+                document.getElementById('confirm-booking').classList.remove('hidden');
+                document.querySelector('.otp-input').focus();
+
+            } catch (error) {
+                showError(error.message || 'Error creando la reserva');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function verifyOtp() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const otp = Array.from(otpInputs).map(i => i.value).join('');
+
+            if (otp.length !== 6) {
+                showError('Por favor introduce el codigo completo');
+                return;
+            }
+
+            showLoading();
+
+            try {
+                await apiFetch('/Reservas/verificar-otp', {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        reservaId: reservaId,
+                        codigoOtp: otp
+                    })
+                });
+
+                // Update summary
+                document.getElementById('sum-service').textContent = selectedService.nombre;
+                document.getElementById('sum-professional').textContent = selectedProfessional?.nombre || 'Primer disponible';
+                document.getElementById('sum-date').textContent = formatDate(selectedDate);
+                document.getElementById('sum-time').textContent = selectedTime;
+                document.getElementById('sum-modalidad').textContent = document.getElementById('modalidad-select').value;
+
+                goToStep(5);
+
+            } catch (error) {
+                showError(error.message || 'Codigo incorrecto');
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Resend OTP
+        document.getElementById('resend-otp').addEventListener('click', async () => {
+            if (!reservaId) return;
+
+            try {
+                await apiFetch(`/Reservas/${reservaId}/reenviar-otp`, { method: 'POST' });
+                showError('Codigo reenviado'); // Using error banner for simplicity
+            } catch (error) {
+                showError('Error reenviando codigo');
+            }
+        });
+
+        // OTP input handling
+        document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+        // ==================== STEP 5: CONFIRMATION ====================
+        document.getElementById('add-to-gcal').addEventListener('click', () => {
+            if (!selectedDate || !selectedSlot || !selectedService) return;
+
+            const startDate = new Date(selectedSlot.horaInicio);
+            const endDate = new Date(selectedSlot.horaFin);
+
+            const formatGcalDate = (date) => date.toISOString().replace(/-|:|\.\d{3}/g, '');
+
+            const gcalUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+                `&text=${encodeURIComponent(selectedService.nombre)}` +
+                `&dates=${formatGcalDate(startDate)}/${formatGcalDate(endDate)}` +
+                `&details=${encodeURIComponent('Cita reservada online')}`;
+
+            window.open(gcalUrl, '_blank');
+        });
+
+        // ==================== NAVIGATION HANDLERS ====================
+        document.getElementById('next-1').addEventListener('click', async () => {
+            await loadProfessionals();
+            goToStep(2);
+        });
+
+        document.getElementById('next-2').addEventListener('click', () => {
+            renderCalendar();
+            goToStep(3);
+        });
+
+        document.getElementById('next-3').addEventListener('click', () => goToStep(4));
+
+        document.getElementById('back-2').addEventListener('click', () => goToStep(1));
+        document.getElementById('back-3').addEventListener('click', () => goToStep(2));
+        document.getElementById('back-4').addEventListener('click', () => goToStep(3));
+
+        document.getElementById('send-code').addEventListener('click', createBooking);
+        document.getElementById('confirm-booking').addEventListener('click', verifyOtp);
+
+        // ==================== INIT ====================
+        async function init() {
+            try {
+                // Load tenant by code
+                const tenantData = await apiFetch(`/Tenant/por-codigo/${TENANT_CODE}`);
+                tenantId = tenantData.id;
+                tenantConfig = tenantData;
+
+                // Update UI with tenant branding
+                document.getElementById('logo-text').textContent = tenantConfig.nombre || 'Reservas';
+                document.title = `Reservar Cita - ${tenantConfig.nombre || ''}`;
+
+                if (tenantConfig.logoUrl) {
+                    document.getElementById('logo-icon').innerHTML = `<img src="${tenantConfig.logoUrl}" alt="Logo">`;
+                } else {
+                    document.getElementById('logo-icon').textContent = (tenantConfig.nombre || 'R')[0].toUpperCase();
+                }
+
+                // Load services
+                await loadServices();
+
+            } catch (error) {
+                showError('Error conectando con el servidor. Verifica el código de tenant.');
+                console.error('Init error:', error);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Start
+        init();
+    </script>
+</body>
+</html>

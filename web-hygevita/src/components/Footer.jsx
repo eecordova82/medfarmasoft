@@ -5,7 +5,6 @@ const footerLinks = {
     { label: 'Características', href: '#features' },
     { label: 'Cómo funciona', href: '#how-it-works' },
     { label: 'Plataformas', href: '#platforms' },
-    { label: 'Hygevita', href: 'https://hygevita.com' },
   ],
   Empresa: [
     { label: 'Sobre nosotros', href: '#' },
@@ -30,21 +29,25 @@ export default function Footer() {
           <div className="col-span-2 md:col-span-4 lg:col-span-2">
             <a href="#" className="inline-flex items-center gap-2 mb-4">
               <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">M</span>
+                <span className="text-white font-bold text-xl">H</span>
               </div>
               <span className="text-xl font-bold">
-                MedFarma<span className="text-accent">Soft</span>
+                Hyge<span className="text-accent">vita</span>
               </span>
             </a>
-            <p className="text-white/60 text-sm leading-relaxed mb-6 max-w-xs">
-              Software de gestión integral para clínicas y farmacias.
-              Multiplataforma, seguro y cumpliendo con toda la normativa RGPD.
+            <p className="text-white/60 text-sm leading-relaxed mb-4 max-w-xs">
+              Plataforma de gestión integral para clínicas y farmacias.
+              Multiplataforma, segura y cumpliendo con toda la normativa RGPD.
+            </p>
+            <p className="text-white/40 text-xs leading-relaxed mb-6 max-w-xs">
+              Hygevita es una aplicación de{' '}
+              <a href="https://medfarmasoft.es" className="text-accent hover:underline">MedFarmaSoft</a>.
             </p>
 
             <div className="space-y-3">
-              <a href="mailto:info@medfarmasoft.es" className="flex items-center gap-3 text-white/60 hover:text-accent transition-colors text-sm">
+              <a href="mailto:info@hygevita.com" className="flex items-center gap-3 text-white/60 hover:text-accent transition-colors text-sm">
                 <Mail size={16} />
-                info@medfarmasoft.es
+                info@hygevita.com
               </a>
               <div className="flex items-center gap-3 text-white/60 text-sm">
                 <MapPin size={16} />
@@ -78,7 +81,7 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-white/40 text-sm">
-            &copy; {new Date().getFullYear()} MedFarmaSoft. Todos los derechos reservados.
+            &copy; {new Date().getFullYear()} Hygevita — una aplicación de MedFarmaSoft. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-6">
             <span className="text-white/40 text-xs">
