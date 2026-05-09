@@ -1,14 +1,16 @@
 import { Check } from 'lucide-react';
-
-const steps = [
-  'Profesional',
-  'Servicio',
-  'Fecha y hora',
-  'Tus datos',
-  'Verificar',
-];
+import { useTranslation } from 'react-i18next';
 
 export default function BookingStepper({ currentStep }) {
+  const { t } = useTranslation();
+  const steps = [
+    t('booking.stepper.professional'),
+    t('booking.stepper.service'),
+    t('booking.stepper.dateTime'),
+    t('booking.stepper.yourData'),
+    t('booking.stepper.verify'),
+  ];
+
   return (
     <div className="bg-white border-b px-4 py-3">
       <div className="max-w-4xl mx-auto flex items-center justify-between">

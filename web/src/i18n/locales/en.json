@@ -1,0 +1,107 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "sending": "Sending...",
+    "min": "min",
+    "language": "Language"
+  },
+  "errors": {
+    "workspaceNotFound": "Workspace not found",
+    "couldNotLoad": "Could not load",
+    "reservationFailed": "Failed to create the reservation",
+    "wrongCode": "Wrong code",
+    "nameRequired": "Name is required",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email",
+    "phoneRequired": "Phone is required"
+  },
+  "booking": {
+    "header": {
+      "subtitle": "Book your appointment online",
+      "poweredBy": "Powered by MedFarmaSoft"
+    },
+    "meta": {
+      "title": "Book appointment - {{name}}",
+      "description": "Book your appointment online with {{name}}",
+      "keywords": "book appointment, {{name}}, online booking"
+    },
+    "stepper": {
+      "professional": "Professional",
+      "service": "Service",
+      "dateTime": "Date & time",
+      "yourData": "Your details",
+      "verify": "Verify"
+    },
+    "professionalList": {
+      "title": "Choose a professional",
+      "empty": "No professionals available."
+    },
+    "serviceList": {
+      "title": "Choose a service",
+      "empty": "No services available.",
+      "search": "Search service...",
+      "notFound": "No services found.",
+      "priceOnRequest": "Price: on request",
+      "paymentInCenter": "Pay at the center",
+      "advancePaymentRequired": "Advance payment required. The center will contact you.",
+      "countOf": "{{count}} of {{total}} services"
+    },
+    "calendar": {
+      "title": "Choose a date"
+    },
+    "timeSlots": {
+      "loading": "Loading time slots...",
+      "title": "Available time slots",
+      "noSlots": "No time slots available for this date.",
+      "allBusy": "All time slots are booked."
+    },
+    "patientForm": {
+      "title": "Your details",
+      "name": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone",
+      "notes": "Notes (optional)",
+      "acceptPrivacy": "I accept the privacy policy and the processing of my data.",
+      "submit": "Confirm and send code"
+    },
+    "otp": {
+      "title": "Verify your email",
+      "subtitle": "We've sent a 6-digit code to <0>{{email}}</0>",
+      "verifying": "Verifying...",
+      "didntReceive": "Didn't receive the code?",
+      "resendIn": "Resend in {{seconds}}s",
+      "resend": "Resend code"
+    },
+    "summary": {
+      "title": "Your booking"
+    },
+    "confirmation": {
+      "title": "Appointment confirmed",
+      "subtitle": "Your booking has been registered successfully.",
+      "pendingPayment": "Pending payment: {{amount}} €",
+      "payInCenter": "This service must be paid at the center.",
+      "advancePaymentInfo": "The center will contact you to arrange payment before the appointment.",
+      "addToCalendar": "Add to calendar",
+      "bookAnother": "Book another appointment",
+      "backToTenant": "Back to {{name}}"
+    },
+    "infoBoxes": {
+      "appointmentWith": "Your appointment will be with <0>{{name}}</0>",
+      "appointmentWithDefault": "Your appointment will be with <0>{{name}}</0> (default for this service)"
+    }
+  },
+  "acceso": {
+    "subtitle": "Patient access",
+    "accessingTo": "You are accessing the workspace of",
+    "openAppPrompt": "Open the MedFarmaSoft app on your phone to continue. If you don't have it installed, download it for free:",
+    "appStoreIos": "App Store (iOS)",
+    "googlePlayAndroid": "Google Play (Android)",
+    "alreadyInstalled": "If you already have the app installed and it didn't open,",
+    "tapHere": "tap here"
+  }
+}

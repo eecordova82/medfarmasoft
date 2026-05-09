@@ -1,4 +1,4 @@
-const API_BASE = 'https://api.medfarmasoft.es';
+const API_BASE = import.meta.env.VITE_API_BASE || 'https://api.medfarmasoft.es';
 
 /**
  * Cliente HTTP para la API de MedFarmaSoft.

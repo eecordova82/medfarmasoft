@@ -1,0 +1,107 @@
+{
+  "common": {
+    "loading": "Cargando...",
+    "back": "Volver",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "submit": "Enviar",
+    "sending": "Enviando...",
+    "min": "min",
+    "language": "Idioma"
+  },
+  "errors": {
+    "workspaceNotFound": "Workspace no encontrado",
+    "couldNotLoad": "No se pudo cargar",
+    "reservationFailed": "Error al crear la reserva",
+    "wrongCode": "Código incorrecto",
+    "nameRequired": "El nombre es obligatorio",
+    "emailRequired": "El email es obligatorio",
+    "emailInvalid": "Email no válido",
+    "phoneRequired": "El teléfono es obligatorio"
+  },
+  "booking": {
+    "header": {
+      "subtitle": "Reserva tu cita online",
+      "poweredBy": "Powered by MedFarmaSoft"
+    },
+    "meta": {
+      "title": "Reservar cita - {{name}}",
+      "description": "Reserva tu cita online en {{name}}",
+      "keywords": "reserva cita, {{name}}, cita online"
+    },
+    "stepper": {
+      "professional": "Profesional",
+      "service": "Servicio",
+      "dateTime": "Fecha y hora",
+      "yourData": "Tus datos",
+      "verify": "Verificar"
+    },
+    "professionalList": {
+      "title": "Selecciona un profesional",
+      "empty": "No hay profesionales disponibles."
+    },
+    "serviceList": {
+      "title": "Selecciona un servicio",
+      "empty": "No hay servicios disponibles.",
+      "search": "Buscar servicio...",
+      "notFound": "No se encontraron servicios.",
+      "priceOnRequest": "Precio: a consultar",
+      "paymentInCenter": "Se abona en el centro",
+      "advancePaymentRequired": "Requiere pago anticipado. El centro contactará contigo.",
+      "countOf": "{{count}} de {{total}} servicios"
+    },
+    "calendar": {
+      "title": "Selecciona una fecha"
+    },
+    "timeSlots": {
+      "loading": "Cargando horarios...",
+      "title": "Horarios disponibles",
+      "noSlots": "No hay horarios disponibles para esta fecha.",
+      "allBusy": "Todos los horarios están ocupados."
+    },
+    "patientForm": {
+      "title": "Tus datos",
+      "name": "Nombre",
+      "lastName": "Apellidos",
+      "email": "Email",
+      "phone": "Teléfono",
+      "notes": "Notas (opcional)",
+      "acceptPrivacy": "Acepto la política de privacidad y el tratamiento de mis datos.",
+      "submit": "Confirmar y enviar código"
+    },
+    "otp": {
+      "title": "Verifica tu email",
+      "subtitle": "Hemos enviado un código de 6 dígitos a <0>{{email}}</0>",
+      "verifying": "Verificando...",
+      "didntReceive": "¿No recibiste el código?",
+      "resendIn": "Reenviar en {{seconds}}s",
+      "resend": "Reenviar código"
+    },
+    "summary": {
+      "title": "Tu reserva"
+    },
+    "confirmation": {
+      "title": "Cita confirmada",
+      "subtitle": "Tu reserva ha sido registrada correctamente.",
+      "pendingPayment": "Pendiente de abono: {{amount}} €",
+      "payInCenter": "Este servicio deberá abonarse en el centro.",
+      "advancePaymentInfo": "El centro se pondrá en contacto contigo para gestionar el pago antes de la cita.",
+      "addToCalendar": "Añadir al calendario",
+      "bookAnother": "Reservar otra cita",
+      "backToTenant": "Volver a {{name}}"
+    },
+    "infoBoxes": {
+      "appointmentWith": "Tu cita será con <0>{{name}}</0>",
+      "appointmentWithDefault": "Tu cita será con <0>{{name}}</0> (por defecto para este servicio)"
+    }
+  },
+  "acceso": {
+    "subtitle": "Acceso para pacientes",
+    "accessingTo": "Estás accediendo al espacio de",
+    "openAppPrompt": "Abre la app MedFarmaSoft en tu móvil para continuar. Si no la tienes instalada, descárgala gratis:",
+    "appStoreIos": "App Store (iOS)",
+    "googlePlayAndroid": "Google Play (Android)",
+    "alreadyInstalled": "Si ya tienes la app instalada y no se abrió,",
+    "tapHere": "pulsa aquí"
+  }
+}

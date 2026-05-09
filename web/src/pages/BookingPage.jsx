@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation, Trans } from 'react-i18next';
 import { Loader2, AlertCircle, ArrowLeft, Phone } from 'lucide-react';
 import { TenantProvider } from '../contexts/TenantContext';
 import { useBookingApi } from '../hooks/useBookingApi';
@@ -12,9 +13,11 @@ import PatientForm from '../components/booking/PatientForm';
 import OtpVerification from '../components/booking/OtpVerification';
 import BookingConfirmation from '../components/booking/BookingConfirmation';
 import BookingSummary from '../components/booking/BookingSummary';
+import LanguageSwitcher from '../components/LanguageSwitcher';
 
 export default function BookingPage() {
   const { slug } = useParams();
+  const { t } = useTranslation();
 
   // Estado del flujo
   const [status, setStatus] = useState('loading'); // loading, ready, error
@@ -58,7 +61,7 @@ export default function BookingPage() {
         : null;
 
     if (!resolve) {
-      setError('Workspace no encontrado');
+      setError(t('errors.workspaceNotFound'));
       setStatus('error');
       return;
     }
@@ -69,7 +72,7 @@ export default function BookingPage() {
         setStatus('ready');
       })
       .catch((err) => {
-        setError(err.message || 'Workspace no encontrado');
+        setError(err.message || t('errors.workspaceNotFound'));
         setStatus('error');
       });
   }, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -212,7 +215,7 @@ export default function BookingPage() {
       setPatientEmail(formData.email);
       setStep(5);
     } catch (err) {
-      setError(err.message || 'Error al crear la reserva');
+      setError(err.message || t('errors.reservationFailed'));
     } finally {
       setFormLoading(false);
     }
@@ -225,7 +228,7 @@ export default function BookingPage() {
       await api.verificarOtp({ reservaId, codigoOtp: code });
       setStep(6);
     } catch (err) {
-      setError(err.message || 'Código incorrecto');
+      setError(err.message || t('errors.wrongCode'));
     } finally {
       setFormLoading(false);
     }
@@ -238,6 +241,14 @@ export default function BookingPage() {
   const goBack = useCallback(() => {
     if (step > 1) setStep(step - 1);
   }, [step]);
+
+  const resetBooking = useCallback(() => {
+    setStep(1);
+    setSelectedProfesional(null);
+    setSelectedServicio(null);
+    setSelectedDate(null);
+    setSelectedSlot(null);
+  }, []);
 
   // Determina si el selector de profesional debe ocultarse
   // (servicio con un único profesional asignado)
@@ -258,7 +269,7 @@ export default function BookingPage() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-          <h1 className="text-xl font-semibold text-gray-900 mb-2">No se pudo cargar</h1>
+          <h1 className="text-xl font-semibold text-gray-900 mb-2">{t('errors.couldNotLoad')}</h1>
           <p className="text-gray-500">{error}</p>
         </div>
       </div>
@@ -278,7 +289,7 @@ export default function BookingPage() {
           style={{ backgroundColor: 'var(--color-tenant-primary, #11756A)' }}
         >
           <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <button onClick={() => { setStep(1); setSelectedProfesional(null); setSelectedServicio(null); setSelectedDate(null); setSelectedSlot(null); }} className="flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity">
+            <button onClick={resetBooking} className="flex items-center gap-4 cursor-pointer hover:opacity-90 transition-opacity">
               {tenant?.logoUrl && (
                 <img
                   src={tenant.logoUrl}
@@ -289,15 +300,18 @@ export default function BookingPage() {
               )}
               <div className="text-left">
                 <h1 className="text-xl font-bold text-gray-900 tracking-tight">{tenant?.nombre}</h1>
-                <p className="text-xs text-gray-800/70">Reserva tu cita online</p>
+                <p className="text-xs text-gray-800/70">{t('booking.header.subtitle')}</p>
               </div>
             </button>
-            {tenant?.telefono && (
-              <a href={`tel:${tenant.telefono}`} className="hidden sm:flex items-center gap-2 bg-white rounded-full px-5 py-2.5 text-sm font-semibold text-gray-800 hover:shadow-lg transition-all">
-                <Phone className="w-4 h-4" style={{ color: 'var(--color-tenant-primary, #11756A)' }} />
-                {tenant.telefono.trim()}
-              </a>
-            )}
+            <div className="flex items-center gap-4">
+              <LanguageSwitcher className="text-gray-900" />
+              {tenant?.telefono && (
+                <a href={`tel:${tenant.telefono}`} className="hidden sm:flex items-center gap-2 bg-white rounded-full px-5 py-2.5 text-sm font-semibold text-gray-800 hover:shadow-lg transition-all">
+                  <Phone className="w-4 h-4" style={{ color: 'var(--color-tenant-primary, #11756A)' }} />
+                  {tenant.telefono.trim()}
+                </a>
+              )}
+            </div>
           </div>
         </header>
 
@@ -312,7 +326,7 @@ export default function BookingPage() {
               onClick={goBack}
               className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4"
             >
-              <ArrowLeft className="w-4 h-4" /> Volver
+              <ArrowLeft className="w-4 h-4" /> {t('common.back')}
             </button>
           )}
 
@@ -340,7 +354,11 @@ export default function BookingPage() {
                   {selectedProfesional && selectedServicio?.profesionales?.length > 0 && (
                     <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800 flex items-center gap-2">
                       <span>✓</span>
-                      <span>Tu cita será con <strong>{selectedProfesional.nombre} {selectedProfesional.apellidos}</strong> (por defecto para este servicio)</span>
+                      <span>
+                        <Trans i18nKey="booking.infoBoxes.appointmentWithDefault" values={{ name: `${selectedProfesional.nombre} ${selectedProfesional.apellidos}` }}>
+                          Tu cita será con <strong>nombre</strong> (por defecto para este servicio)
+                        </Trans>
+                      </span>
                     </div>
                   )}
                   <ProfessionalList
@@ -358,7 +376,11 @@ export default function BookingPage() {
                   {profesionalAutoseleccionado && selectedProfesional && (
                     <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800 flex items-center gap-2">
                       <span>👤</span>
-                      <span>Tu cita será con <strong>{selectedProfesional.nombre} {selectedProfesional.apellidos}</strong></span>
+                      <span>
+                        <Trans i18nKey="booking.infoBoxes.appointmentWith" values={{ name: `${selectedProfesional.nombre} ${selectedProfesional.apellidos}` }}>
+                          Tu cita será con <strong>nombre</strong>
+                        </Trans>
+                      </span>
                     </div>
                   )}
                   <AvailabilityCalendar
@@ -399,6 +421,7 @@ export default function BookingPage() {
                     hora: selectedSlot,
                   }}
                   tenant={tenant}
+                  onReset={resetBooking}
                 />
               )}
             </div>
@@ -436,7 +459,7 @@ export default function BookingPage() {
             )}
           </div>
           {tenant?.plan !== 'professional' && tenant?.plan !== 'enterprise' && (
-            <p className="text-xs mt-2 text-gray-800/50">Powered by MedFarmaSoft</p>
+            <p className="text-xs mt-2 text-gray-800/50">{t('booking.header.poweredBy')}</p>
           )}
         </footer>
       </div>

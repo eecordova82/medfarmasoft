@@ -1,27 +1,30 @@
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function TimeSlotPicker({ slots, selectedSlot, onSlotSelect, loading }) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-8 text-gray-500">
         <Loader2 className="w-5 h-5 animate-spin mr-2" />
-        Cargando horarios...
+        {t('booking.timeSlots.loading')}
       </div>
     );
   }
 
   if (!slots?.length) {
-    return <p className="text-center text-gray-500 py-4">No hay horarios disponibles para esta fecha.</p>;
+    return <p className="text-center text-gray-500 py-4">{t('booking.timeSlots.noSlots')}</p>;
   }
 
   const disponibles = slots.filter((s) => s.disponible);
   if (!disponibles.length) {
-    return <p className="text-center text-gray-500 py-4">Todos los horarios est\án ocupados.</p>;
+    return <p className="text-center text-gray-500 py-4">{t('booking.timeSlots.allBusy')}</p>;
   }
 
   return (
     <div className="mt-6">
-      <h3 className="text-lg font-medium text-gray-900 mb-3">Horarios disponibles</h3>
+      <h3 className="text-lg font-medium text-gray-900 mb-3">{t('booking.timeSlots.title')}</h3>
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
         {slots.map((slot) => (
           <button
