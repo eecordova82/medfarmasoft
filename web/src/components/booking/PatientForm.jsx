@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
+import { useTranslation } from 'react-i18next';
 
 const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY;
 
 export default function PatientForm({ onSubmit, loading }) {
+  const { t } = useTranslation();
   const [form, setForm] = useState({
     nombre: '',
     apellidos: '',
@@ -18,10 +20,10 @@ export default function PatientForm({ onSubmit, loading }) {
 
   const validate = () => {
     const errs = {};
-    if (!form.nombre.trim()) errs.nombre = 'El nombre es obligatorio';
-    if (!form.email.trim()) errs.email = 'El email es obligatorio';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Email no v\álido';
-    if (!form.telefono.trim()) errs.telefono = 'El teléfono es obligatorio';
+    if (!form.nombre.trim()) errs.nombre = t('errors.nameRequired');
+    if (!form.email.trim()) errs.email = t('errors.emailRequired');
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = t('errors.emailInvalid');
+    if (!form.telefono.trim()) errs.telefono = t('errors.phoneRequired');
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -45,12 +47,12 @@ export default function PatientForm({ onSubmit, loading }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Tus datos</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('booking.patientForm.title')}</h2>
 
       <div className="space-y-4">
         <div className="grid sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('booking.patientForm.name')} *</label>
             <input
               type="text"
               value={form.nombre}
@@ -61,7 +63,7 @@ export default function PatientForm({ onSubmit, loading }) {
             {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre}</p>}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Apellidos</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('booking.patientForm.lastName')}</label>
             <input
               type="text"
               value={form.apellidos}
@@ -72,7 +74,7 @@ export default function PatientForm({ onSubmit, loading }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('booking.patientForm.email')} *</label>
           <input
             type="email"
             value={form.email}
@@ -83,7 +85,7 @@ export default function PatientForm({ onSubmit, loading }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono *</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('booking.patientForm.phone')} *</label>
           <input
             type="tel"
             value={form.telefono}
@@ -94,7 +96,7 @@ export default function PatientForm({ onSubmit, loading }) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Notas (opcional)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('booking.patientForm.notes')}</label>
           <textarea
             value={form.notas}
             onChange={handleChange('notas')}
@@ -127,7 +129,7 @@ export default function PatientForm({ onSubmit, loading }) {
 
         <div className="flex items-start gap-2 text-sm text-gray-500">
           <input type="checkbox" required className="mt-1" />
-          <span>Acepto la política de privacidad y el tratamiento de mis datos.</span>
+          <span>{t('booking.patientForm.acceptPrivacy')}</span>
         </div>
 
         <button
@@ -136,7 +138,7 @@ export default function PatientForm({ onSubmit, loading }) {
           className="w-full py-3 rounded-lg text-white font-semibold transition-opacity disabled:opacity-50"
           style={{ backgroundColor: 'var(--color-tenant-primary, #11756A)' }}
         >
-          {loading ? 'Enviando...' : 'Confirmar y enviar código'}
+          {loading ? t('common.sending') : t('booking.patientForm.submit')}
         </button>
       </div>
     </form>

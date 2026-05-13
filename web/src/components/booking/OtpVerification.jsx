@@ -1,7 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
+import { useTranslation, Trans } from 'react-i18next';
 
 export default function OtpVerification({ email, onVerify, onResend, loading }) {
+  const { t } = useTranslation();
   const [digits, setDigits] = useState(['', '', '', '', '', '']);
   const [error, setError] = useState('');
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -60,9 +62,11 @@ export default function OtpVerification({ email, onVerify, onResend, loading }) 
 
   return (
     <div className="text-center">
-      <h2 className="text-xl font-semibold text-gray-900 mb-2">Verifica tu email</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('booking.otp.title')}</h2>
       <p className="text-gray-500 mb-6">
-        Hemos enviado un código de 6 dígitos a <strong>{email}</strong>
+        <Trans i18nKey="booking.otp.subtitle" values={{ email }}>
+          Hemos enviado un código de 6 dígitos a <strong>email</strong>
+        </Trans>
       </p>
 
       <div className="flex justify-center gap-2 mb-6">
@@ -86,23 +90,23 @@ export default function OtpVerification({ email, onVerify, onResend, loading }) 
 
       {loading && (
         <div className="flex items-center justify-center gap-2 text-gray-500 mb-4">
-          <Loader2 className="w-4 h-4 animate-spin" /> Verificando...
+          <Loader2 className="w-4 h-4 animate-spin" /> {t('booking.otp.verifying')}
         </div>
       )}
 
       {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
       <div className="text-sm text-gray-500">
-        ¿No recibiste el código?{' '}
+        {t('booking.otp.didntReceive')}{' '}
         {resendCooldown > 0 ? (
-          <span>Reenviar en {resendCooldown}s</span>
+          <span>{t('booking.otp.resendIn', { seconds: resendCooldown })}</span>
         ) : (
           <button
             onClick={handleResend}
             className="font-semibold hover:underline"
             style={{ color: 'var(--color-tenant-primary, #11756A)' }}
           >
-            Reenviar código
+            {t('booking.otp.resend')}
           </button>
         )}
       </div>

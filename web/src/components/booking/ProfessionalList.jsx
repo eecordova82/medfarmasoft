@@ -1,13 +1,15 @@
 import { User } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function ProfessionalList({ profesionales, onSelect }) {
+  const { t } = useTranslation();
   if (!profesionales?.length) {
-    return <p className="text-center text-gray-500 py-8">No hay profesionales disponibles.</p>;
+    return <p className="text-center text-gray-500 py-8">{t('booking.professionalList.empty')}</p>;
   }
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Selecciona un profesional</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('booking.professionalList.title')}</h2>
       <div className="grid gap-4 sm:grid-cols-2">
         {profesionales.map((prof) => (
           <button

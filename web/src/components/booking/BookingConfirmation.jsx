@@ -1,7 +1,9 @@
-import { CheckCircle, Calendar, MapPin, Download } from 'lucide-react';
+import { CheckCircle, Calendar, MapPin, Download, Phone, Mail, RotateCcw, ExternalLink } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { downloadIcs } from '../../lib/icsGenerator';
 
-export default function BookingConfirmation({ booking, tenant }) {
+export default function BookingConfirmation({ booking, tenant, onReset }) {
+  const { t } = useTranslation();
   const { profesional, servicio, fecha, hora } = booking;
 
   const handleDownloadIcs = () => {
@@ -27,15 +29,15 @@ export default function BookingConfirmation({ booking, tenant }) {
         <CheckCircle className="w-8 h-8 text-white" />
       </div>
 
-      <h2 className="text-2xl font-bold text-gray-900 mb-2">Cita confirmada</h2>
-      <p className="text-gray-500 mb-8">Tu reserva ha sido registrada correctamente.</p>
+      <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('booking.confirmation.title')}</h2>
+      <p className="text-gray-500 mb-8">{t('booking.confirmation.subtitle')}</p>
 
       <div className="bg-gray-50 rounded-xl p-6 text-left max-w-sm mx-auto space-y-3">
         <div className="flex items-center gap-3">
           <Calendar className="w-5 h-5 text-gray-400 shrink-0" />
           <div>
             <p className="font-semibold text-gray-900">{fecha}</p>
-            <p className="text-sm text-gray-500">{hora} - {servicio.duracionMinutos} min</p>
+            <p className="text-sm text-gray-500">{hora} - {servicio.duracionMinutos} {t('common.min')}</p>
           </div>
         </div>
 
@@ -55,10 +57,10 @@ export default function BookingConfirmation({ booking, tenant }) {
 
         {servicio.precio != null && servicio.precio > 0 && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">
-            <strong>Pendiente de abono: {servicio.precio.toFixed(2)} €</strong>
-            <p className="mt-1">Este servicio deberá abonarse en el centro.</p>
+            <strong>{t('booking.confirmation.pendingPayment', { amount: servicio.precio.toFixed(2) })}</strong>
+            <p className="mt-1">{t('booking.confirmation.payInCenter')}</p>
             {servicio.requierePagoAnticipado && (
-              <p className="mt-1">El centro se pondrá en contacto contigo para gestionar el pago antes de la cita.</p>
+              <p className="mt-1">{t('booking.confirmation.advancePaymentInfo')}</p>
             )}
           </div>
         )}
@@ -71,25 +73,60 @@ export default function BookingConfirmation({ booking, tenant }) {
         )}
       </div>
 
-      <button
-        onClick={handleDownloadIcs}
-        className="mt-6 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
-        style={{ backgroundColor: 'var(--color-tenant-primary, #11756A)' }}
-      >
-        <Download className="w-4 h-4" /> Añadir al calendario
-      </button>
+      <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+        <button
+          onClick={handleDownloadIcs}
+          className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-white font-medium transition-opacity hover:opacity-90"
+          style={{ backgroundColor: 'var(--color-tenant-primary, #11756A)' }}
+        >
+          <Download className="w-4 h-4" /> {t('booking.confirmation.addToCalendar')}
+        </button>
 
-      {tenant?.urlWeb && (tenant?.plan === 'professional' || tenant?.plan === 'enterprise') && (
-        <div className="mt-4">
+        {onReset && (
+          <button
+            onClick={onReset}
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium border transition-colors hover:bg-gray-50"
+            style={{
+              borderColor: 'var(--color-tenant-primary, #11756A)',
+              color: 'var(--color-tenant-primary, #11756A)',
+            }}
+          >
+            <RotateCcw className="w-4 h-4" /> {t('booking.confirmation.bookAnother')}
+          </button>
+        )}
+      </div>
+
+      <div className="mt-6 flex flex-col items-center gap-2">
+        {tenant?.telefono ? (
           <a
-            href={tenant.urlWeb}
-            className="text-sm hover:underline"
+            href={`tel:${tenant.telefono.replace(/\s+/g, '')}`}
+            className="inline-flex items-center gap-2 text-sm font-medium hover:underline"
             style={{ color: 'var(--color-tenant-primary, #11756A)' }}
           >
-            Volver a {tenant.nombre}
+            <Phone className="w-4 h-4" /> {tenant.telefono.trim()}
           </a>
-        </div>
-      )}
+        ) : tenant?.email ? (
+          <a
+            href={`mailto:${tenant.email}`}
+            className="inline-flex items-center gap-2 text-sm font-medium hover:underline"
+            style={{ color: 'var(--color-tenant-primary, #11756A)' }}
+          >
+            <Mail className="w-4 h-4" /> {tenant.email}
+          </a>
+        ) : null}
+
+        {tenant?.urlWeb && (
+          <a
+            href={tenant.urlWeb}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-sm hover:underline"
+            style={{ color: 'var(--color-tenant-primary, #11756A)' }}
+          >
+            <ExternalLink className="w-3.5 h-3.5" /> {t('booking.confirmation.backToTenant', { name: tenant.nombre })}
+          </a>
+        )}
+      </div>
     </div>
   );
 }

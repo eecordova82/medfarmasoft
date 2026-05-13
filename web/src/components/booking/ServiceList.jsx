@@ -1,21 +1,23 @@
 import { useState } from 'react';
 import { Clock, CreditCard, Search } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function ServiceList({ servicios, onSelect }) {
   const [search, setSearch] = useState('');
+  const { t } = useTranslation();
 
   if (!servicios?.length) {
-    return <p className="text-center text-gray-500 py-8">No hay servicios disponibles.</p>;
+    return <p className="text-center text-gray-500 py-8">{t('booking.serviceList.empty')}</p>;
   }
 
   const formatPrecio = (precio, requierePago) => {
-    if (precio == null || precio === 0) return { texto: 'Precio: a consultar', color: 'text-gray-500' };
+    if (precio == null || precio === 0) return { texto: t('booking.serviceList.priceOnRequest'), color: 'text-gray-500' };
     return {
-      texto: `${precio.toFixed(2)} \€`,
+      texto: `${precio.toFixed(2)} €`,
       color: 'text-gray-900 font-semibold',
       aviso: requierePago
-        ? 'Requiere pago anticipado. El centro contactar\á contigo.'
-        : 'Se abona en el centro',
+        ? t('booking.serviceList.advancePaymentRequired')
+        : t('booking.serviceList.paymentInCenter'),
     };
   };
 
@@ -28,14 +30,14 @@ export default function ServiceList({ servicios, onSelect }) {
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-gray-900 mb-4">Selecciona un servicio</h2>
+      <h2 className="text-xl font-semibold text-gray-900 mb-4">{t('booking.serviceList.title')}</h2>
 
       {servicios.length > 5 && (
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
-            placeholder="Buscar servicio..."
+            placeholder={t('booking.serviceList.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2"
@@ -45,7 +47,7 @@ export default function ServiceList({ servicios, onSelect }) {
       )}
 
       {filtered.length === 0 ? (
-        <p className="text-center text-gray-500 py-4">No se encontraron servicios.</p>
+        <p className="text-center text-gray-500 py-4">{t('booking.serviceList.notFound')}</p>
       ) : (
         <div className="grid gap-3 max-h-[60vh] overflow-y-auto">
           {filtered.map((svc) => {
@@ -64,7 +66,7 @@ export default function ServiceList({ servicios, onSelect }) {
                     )}
                     <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
                       <span className="flex items-center gap-1">
-                        <Clock className="w-4 h-4" /> {svc.duracionMinutos} min
+                        <Clock className="w-4 h-4" /> {svc.duracionMinutos} {t('common.min')}
                       </span>
                       <span className={`flex items-center gap-1 ${precio.color}`}>
                         <CreditCard className="w-4 h-4" /> {precio.texto}
@@ -83,7 +85,7 @@ export default function ServiceList({ servicios, onSelect }) {
         </div>
       )}
 
-      <p className="text-xs text-gray-400 mt-2 text-right">{filtered.length} de {servicios.length} servicios</p>
+      <p className="text-xs text-gray-400 mt-2 text-right">{t('booking.serviceList.countOf', { count: filtered.length, total: servicios.length })}</p>
     </div>
   );
 }
